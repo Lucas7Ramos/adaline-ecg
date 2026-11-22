@@ -1014,6 +1014,288 @@
 }
 
 /* =========================================================
+   Telas 11 e 12: peças comuns dos experimentos
+   ========================================================= */
+
+/* Traço de legenda (a cor nunca vai sozinha: sempre com o nome ao lado). */
+#t-exp1 .traco,
+#t-exp2 .traco {
+  display: inline-block;
+  width: 34px;
+  height: 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+#t-exp1 .traco.laranja, #t-exp2 .traco.laranja { background: var(--laranja); }
+#t-exp1 .traco.tinta, #t-exp2 .traco.tinta { background: var(--tinta); }
+#t-exp1 .traco.azul, #t-exp2 .traco.azul { background: var(--azul); }
+#t-exp2 .traco.tracejado {
+  height: 0;
+  border-top: 3px dashed var(--tinta);
+  border-radius: 0;
+}
+#t-exp1 .item,
+#t-exp2 .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Tela 11: Experimento 1
+   ========================================================= */
+
+#t-exp1 .acoes {
+  position: absolute;
+  right: var(--margem);
+  top: 82px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+#t-exp1 .ligar {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 0 30px 0 24px;
+  font-size: 26px;
+  box-shadow: var(--sombra);
+}
+#t-exp1 .ligar svg { display: block; }
+#t-exp1 .ligar[aria-pressed="true"] { background: var(--branco); color: var(--tinta); }
+#t-exp1 .ligar[aria-pressed="true"]:hover { background: var(--azul-claro); }
+
+#t-exp1 .monitor {
+  position: absolute;
+  left: var(--margem);
+  top: 176px;
+  width: 744px;
+  height: 312px;
+}
+#t-exp1 .monitor .faixa { transition: background-color 250ms ease-out, color 250ms ease-out; }
+#t-exp1 .monitor svg { display: block; }
+#t-exp1 .monitor .legenda {
+  display: flex;
+  gap: 28px;
+  padding: 0 20px;
+}
+
+#t-exp1 .painel {
+  position: absolute;
+  left: 828px;
+  width: 396px;
+  padding: 10px 20px;
+}
+#t-exp1 .painel.pesos { top: 176px; height: 146px; }
+#t-exp1 .painel.espectro { top: 342px; height: 146px; }
+#t-exp1 .painel.snr { top: 508px; height: 148px; }
+#t-exp1 .painel .cab {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 30px;
+}
+#t-exp1 .painel .nome {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+  margin-right: auto;
+}
+#t-exp1 .painel svg { display: block; margin-top: 4px; overflow: visible; }
+
+#t-exp1 .snr .linha-snr {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+#t-exp1 .snr .numero-grande { font-size: 64px; }
+#t-exp1 .snr .barra {
+  height: 20px;
+  margin-top: 6px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--branco);
+}
+#t-exp1 .snr .barra > div {
+  height: 100%;
+  width: 0;
+  background: var(--laranja);
+  transition: background-color 250ms ease-out;
+}
+#t-exp1 .snr .colab {
+  margin-top: 8px;
+  font-family: var(--f-mono);
+  font-size: 20px;
+  line-height: 1;
+}
+
+#t-exp1 .resposta {
+  position: absolute;
+  left: var(--margem);
+  top: 508px;
+  width: 744px;
+  height: 148px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+#t-exp1 .resposta .pilula { align-self: flex-start; }
+#t-exp1 .resposta .frase { font-size: 34px; }
+
+/* =========================================================
+   Tela 12: Experimento 2
+   ========================================================= */
+
+#t-exp2 .controle {
+  position: absolute;
+  left: 528px;
+  top: 36px;
+  width: 696px;
+  height: 120px;
+  padding: 8px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+#t-exp2 .controle .linha-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#t-exp2 .controle .valor-amarelo { font-size: 30px; padding: 3px 14px; }
+#t-exp2 .controle .segmentado .btn { min-height: 46px; padding: 0 18px; }
+#t-exp2 .controle .linha-slider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+#t-exp2 .controle .ponta { font-family: var(--f-mono); font-size: 20px; flex-shrink: 0; }
+
+#t-exp2 .monitor {
+  position: absolute;
+  left: var(--margem);
+  top: 176px;
+  width: 704px;
+  height: 240px;
+  padding: 10px 20px;
+}
+#t-exp2 .monitor .cab {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 40px;
+}
+#t-exp2 .monitor .status {
+  margin-left: auto;
+  background: var(--laranja);
+  color: var(--tinta);
+  border: 2.5px solid var(--tinta);
+  border-radius: 999px;
+  padding: 5px 16px;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
+}
+#t-exp2 .monitor .status.pronto { background: var(--azul); color: var(--branco); }
+#t-exp2 .monitor svg { display: block; margin-top: 8px; }
+
+#t-exp2 .barras {
+  position: absolute;
+  left: 788px;
+  top: 176px;
+  width: 436px;
+  height: 240px;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#t-exp2 .barra-seg .topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+#t-exp2 .barra-seg .nome { font-weight: 700; font-size: 22px; line-height: 1.1; }
+#t-exp2 .barra-seg .val { font-family: var(--f-mono); font-size: 20px; line-height: 1.1; }
+#t-exp2 .segs { display: flex; gap: 6px; }
+#t-exp2 .segs span {
+  width: 33px;
+  height: 30px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 6px;
+  background: var(--branco);
+  transition: background-color 200ms ease-out;
+}
+#t-exp2 .segs.azul span.cheio { background: var(--azul); }
+#t-exp2 .segs.laranja span.cheio { background: var(--laranja); }
+#t-exp2 .barras .resultado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 22px;
+}
+#t-exp2 .pilula-preta {
+  background: var(--tinta);
+  color: var(--branco);
+  border-radius: 999px;
+  padding: 5px 16px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+#t-exp2 .tesoura {
+  position: absolute;
+  left: var(--margem);
+  top: 440px;
+  width: 704px;
+  height: 216px;
+  padding: 10px 20px;
+}
+#t-exp2 .tesoura .cab {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.1;
+}
+#t-exp2 .tesoura .graficos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+#t-exp2 .tesoura svg { display: block; overflow: visible; }
+#t-exp2 .tesoura .titulo-graf { font-family: var(--f-texto); font-weight: 700; font-size: 20px; }
+#t-exp2 .tesoura .movel { transition: transform 250ms ease-out; }
+
+#t-exp2 .resposta {
+  position: absolute;
+  left: 788px;
+  top: 440px;
+  width: 436px;
+  height: 216px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+#t-exp2 .resposta .pilula { align-self: flex-start; }
+#t-exp2 .resposta .frase { font-size: 30px; }
+
+/* =========================================================
    Tela 13: Experimento 3
    ========================================================= */
 
