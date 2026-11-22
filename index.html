@@ -399,26 +399,145 @@
 
   <!-- ===================== 7. Adaline × Perceptron ===================== -->
   <section class="tela" id="t-perceptron" data-id="perceptron" data-num="7" data-bloco="3" data-grupo="b3"
-           data-titulo="Adaline × Perceptron" data-passos="1">
+           data-titulo="Adaline × Perceptron" data-passos="3">
     <h1 class="titulo"><span class="chave">Adaline</span> × Perceptron</h1>
-    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Os dois neurônios lado a lado, com o ponto onde o erro é medido.</p></div>
+
+    <!-- Os dois neurônios com o mesmo desenho; muda só onde o erro é medido. -->
+    <div class="lado cartao" id="perc-p">
+      <div class="cab"><span class="nome">Perceptron</span><span class="ano">Rosenblatt, 1958</span></div>
+      <svg class="diagrama" width="526" height="184" viewBox="0 0 526 184" aria-label="Perceptron: soma, função degrau e só depois o erro e = d menos a saída de mais ou menos 1">
+        <path class="fio" d="M42 42 L170 92 M42 142 L170 92"/>
+        <circle class="no" cx="42" cy="42" r="28"/>
+        <text class="t-no" x="42" y="51">x<tspan class="t-sub" dy="5">1</tspan></text>
+        <circle class="no" cx="42" cy="142" r="28"/>
+        <text class="t-no" x="42" y="151">x<tspan class="t-sub" dy="5">2</tspan></text>
+        <text class="t-peso" x="112" y="54">w<tspan class="t-sub" dy="5">1</tspan></text>
+        <text class="t-peso" x="112" y="152">w<tspan class="t-sub" dy="5">2</tspan></text>
+        <circle cx="170" cy="92" r="30" fill="#111111"/>
+        <text class="t-soma" x="170" y="106">Σ</text>
+        <path class="fio" d="M200 92 L230 92"/>
+        <path class="ponta" d="M228 82 L242.5 92 L228 102 Z"/>
+        <rect class="no" x="244" y="62" width="68" height="60" rx="8"/>
+        <path class="fio" d="M256 108 L278 108 L278 76 L300 76"/>
+        <text class="t-rot" x="278" y="148">degrau</text>
+        <path class="fio" d="M312 92 L382 92"/>
+        <path class="ponta" d="M380 82 L394.5 92 L380 102 Z"/>
+        <text class="t-var" x="352" y="78">±1</text>
+        <circle class="no" cx="420" cy="92" r="24"/>
+        <path class="fio" d="M420 8 L420 54"/>
+        <path class="ponta" d="M410 52 L420 66.5 L430 52 Z"/>
+        <text class="t-var" x="444" y="32">d</text>
+        <text class="t-sinal" x="390" y="50">+</text>
+        <text class="t-sinal" x="384" y="120">−</text>
+        <path class="fio" d="M420 117.5 L420 162"/>
+        <path class="ponta" d="M410 160 L420 174.5 L430 160 Z"/>
+        <text class="t-var" x="444" y="168">e</text>
+      </svg>
+      <div class="onde">O erro é medido <b>depois</b> do degrau</div>
+      <div class="veredito" data-passo="2">
+        <span class="grande">acertou ou não</span>
+        <span class="sub">o erro só vale 0 ou ±2: não diz o tamanho</span>
+      </div>
+    </div>
+
+    <div class="lado cartao" id="perc-a">
+      <div class="cab"><span class="nome"><span class="bolinha azul"></span>Adaline</span><span class="ano">Widrow e Hoff, 1960</span></div>
+      <svg class="diagrama" width="526" height="184" viewBox="0 0 526 184" aria-label="Adaline: soma e o erro e = d menos y medido direto na saída linear, sem degrau">
+        <path class="fio" d="M42 42 L170 92 M42 142 L170 92"/>
+        <circle class="no" cx="42" cy="42" r="28"/>
+        <text class="t-no" x="42" y="51">x<tspan class="t-sub" dy="5">1</tspan></text>
+        <circle class="no" cx="42" cy="142" r="28"/>
+        <text class="t-no" x="42" y="151">x<tspan class="t-sub" dy="5">2</tspan></text>
+        <text class="t-peso" x="112" y="54">w<tspan class="t-sub" dy="5">1</tspan></text>
+        <text class="t-peso" x="112" y="152">w<tspan class="t-sub" dy="5">2</tspan></text>
+        <circle cx="170" cy="92" r="30" fill="#111111"/>
+        <text class="t-soma" x="170" y="106">Σ</text>
+        <rect class="fantasma" x="244" y="62" width="68" height="60" rx="8"/>
+        <text class="t-rot" x="278" y="148">sem degrau</text>
+        <path class="fio azul" d="M200 92 L382 92"/>
+        <path class="ponta azul" d="M380 82 L394.5 92 L380 102 Z"/>
+        <text class="t-var" x="352" y="78">y</text>
+        <circle class="no" cx="420" cy="92" r="24"/>
+        <path class="fio" d="M420 8 L420 54"/>
+        <path class="ponta" d="M410 52 L420 66.5 L430 52 Z"/>
+        <text class="t-var" x="444" y="32">d</text>
+        <text class="t-sinal" x="390" y="50">+</text>
+        <text class="t-sinal" x="384" y="120">−</text>
+        <path class="fio" d="M420 117.5 L420 162"/>
+        <path class="ponta" d="M410 160 L420 174.5 L430 160 Z"/>
+        <text class="t-var" x="444" y="168">e</text>
+      </svg>
+      <div class="onde">O erro é medido <b>antes</b>, na saída linear</div>
+      <div class="veredito" data-passo="2">
+        <span class="grande">quanto errou</span>
+        <span class="sub">o erro é um número real: dá para usar o gradiente</span>
+      </div>
+    </div>
+
+    <div class="frase-final em-uma-frase" data-passo="3">
+      <span class="pilula">em uma frase</span>
+      <span class="frase">O Perceptron sabe se errou; o Adaline sabe quanto errou.</span>
+    </div>
+
     <div class="notas">
       <p>Os dois são um neurônio linear. O Perceptron mede o erro depois da função degrau: só sabe se acertou ou errou. O Adaline mede o erro antes, na saída linear: sabe quanto errou, e por isso pode usar gradiente descendente. Aqui não há classificação: o Adaline faz estimação contínua.</p>
-      <p class="deixa">Versão curta: “o Perceptron sabe se errou, o Adaline sabe quanto errou”.</p>
+      <p class="deixa">Passos: os dois neurônios (o texto amarelo diz onde o erro é medido) → “acertou ou não” × “quanto errou” → a frase. Versão curta: “o Perceptron sabe se errou, o Adaline sabe quanto errou”.</p>
     </div>
   </section>
 
   <!-- ===================== 8. A regra LMS ===================== -->
   <section class="tela" id="t-lms" data-id="lms" data-num="8" data-bloco="3" data-grupo="b3"
-           data-titulo="A regra LMS" data-passos="1">
+           data-titulo="A regra LMS" data-passos="3">
     <h1 class="titulo">A regra <span class="chave">LMS</span></h1>
-    <div class="em-construcao cartao"><b>Tela em construção.</b><p>A “tigela” do erro com o caminho dos pesos e o slider de µ.</p></div>
+
+    <div class="tigela cartao">
+      <div class="cab">A tigela do erro e², vista de cima</div>
+      <div class="area">
+        <svg id="lms-tigela" width="444" height="368" viewBox="0 0 444 368" aria-label="Curvas de nível do erro no plano w1, w2, com o caminho dos pesos do LMS"></svg>
+      </div>
+      <div class="legenda">
+        <span><i class="marca fundo"></i>fundo: pesos corretos</span>
+        <span><i class="marca inicio"></i>início (0, 0)</span>
+      </div>
+      <div class="estado" id="lms-estado">t = 0,00 s · w<sub>1</sub> = 0,00 · w<sub>2</sub> = 0,00</div>
+    </div>
+
+    <div class="formula cartao">
+      <div class="eq">w <span class="seta-txt">←</span> w + 2·<b>µ</b>·<b>e</b>·<b>x</b></div>
+      <div class="termos">
+        <span><b class="chip">µ</b>tamanho do passo</span>
+        <span><b class="chip">e</b>quanto errou</span>
+        <span><b class="chip">x</b>a entrada</span>
+      </div>
+    </div>
+
+    <div class="controle-mu cartao" data-passo="2">
+      <div class="linha1">
+        <label for="lms-mu">Taxa de aprendizado µ</label>
+        <span class="valor-amarelo" id="lms-mu-txt">0,01</span>
+      </div>
+      <input id="lms-mu" class="slider" type="range" min="0" max="5" step="1" value="3"
+             aria-label="Taxa de aprendizado µ">
+      <div class="atalhos">
+        <button type="button" class="btn" data-mu="pequeno" aria-pressed="false">pequeno</button>
+        <button type="button" class="btn" data-mu="medio" aria-pressed="true">médio</button>
+        <button type="button" class="btn" data-mu="grande" aria-pressed="false">grande</button>
+        <button type="button" class="btn" id="lms-soltar">soltar de novo</button>
+      </div>
+    </div>
+
+    <div class="frase-final em-uma-frase" data-passo="3">
+      <span class="pilula">regra delta</span>
+      <span class="frase">Uma amostra por vez: o filtro aprende enquanto filtra.</span>
+    </div>
+
     <div class="notas">
       <ul>
         <li>O objetivo é diminuir e². A regra LMS dá um passo na direção que mais reduz o erro: w ← w + 2·µ·e·x.</li>
         <li>µ é a taxa de aprendizado, o tamanho do passo.</li>
         <li>É a regra delta (Widrow-Hoff) aplicada a uma amostra por vez: o filtro aprende enquanto filtra.</li>
       </ul>
+      <p class="deixa">A bolinha é o LMS de verdade sobre o registro 100 (câmera lenta, 1/3 do tempo real; um ponto do caminho por ciclo de 60 Hz). Para sozinha em 6 s de sinal. Passo 2: slider de µ, de 0,001 a 0,05. “Pequeno” (0,002): passos curtos e lentos. “Grande” (0,05): chega rápido, mas fica tremendo em volta do fundo (o µ maior aparece no experimento 2). Passo 3: a frase. R ou “soltar de novo” recomeça.</p>
     </div>
   </section>
 
@@ -426,10 +545,64 @@
   <section class="tela" id="t-algoritmo" data-id="algoritmo" data-num="9" data-bloco="3" data-grupo="b3"
            data-titulo="O algoritmo passo a passo" data-passos="1">
     <h1 class="titulo">O algoritmo <span class="chave">passo a passo</span></h1>
-    <div class="em-construcao cartao"><b>Tela em construção.</b><p>O loop do Adaline com a linha atual destacada e os valores da amostra.</p></div>
+
+    <!-- O loop: cada linha do código com o valor que ela produz na amostra atual. -->
+    <div class="codigo cartao">
+      <div class="topo">
+        <code>for n in range(N):</code>
+        <span class="params">µ = 0,01 · ω = 2π·60/fs</span>
+      </div>
+      <div class="linha" data-linha="1">
+        <code>x1, x2 = cos(ω*n), sin(ω*n)</code>
+        <span class="val" id="alg-v1">—</span>
+      </div>
+      <div class="linha" data-linha="2">
+        <code>y = w1*x1 + w2*x2</code>
+        <span class="val" id="alg-v2">—</span>
+      </div>
+      <div class="linha" data-linha="3">
+        <code>e = d[n] - y</code>
+        <span class="val" id="alg-v3">—</span>
+      </div>
+      <div class="linha dupla" data-linha="4">
+        <code>w1 += 2*mu*e*x1<br>w2 += 2*mu*e*x2</code>
+        <span class="val" id="alg-v4">—</span>
+      </div>
+    </div>
+
+    <div class="contador cartao">
+      <div class="rot">amostras processadas</div>
+      <div class="numero-grande" id="alg-n">0</div>
+      <div class="tempo" id="alg-t">t = 0 s</div>
+      <div class="botoes">
+        <button type="button" class="btn ativo" id="alg-proxima">próxima amostra</button>
+        <button type="button" class="btn" id="alg-acelerar">acelerar</button>
+        <button type="button" class="btn" id="alg-recomecar">recomeçar</button>
+      </div>
+    </div>
+
+    <div class="pesos cartao">
+      <div class="legenda">
+        <div class="nome">Pesos</div>
+        <div class="item"><span class="traco azul"></span><span>w<sub>1</sub></span></div>
+        <div class="item"><span class="traco tinta"></span><span>w<sub>2</sub></span></div>
+        <div class="item"><span class="traco tracejado"></span>valor certo</div>
+      </div>
+      <div class="area">
+        <svg id="alg-pesos" class="grafico" width="906" height="100" viewBox="0 0 906 100" aria-label="Pesos w1 e w2 ao longo dos primeiros 2 segundos"></svg>
+        <span class="anotacao" id="alg-estavel">os pesos se estabilizaram</span>
+      </div>
+    </div>
+
     <div class="notas">
-      <p>O que o Adaline faz em cada amostra, nas 4 linhas do loop.</p>
-      <p class="deixa">Mostrar uma ou duas amostras com “próxima amostra” e depois “acelerar”.</p>
+      <p>O que o Adaline faz em cada amostra, nas 4 linhas do loop:</p>
+      <ul>
+        <li>monta a referência x<sub>1</sub> = cos e x<sub>2</sub> = sen de 60 Hz;</li>
+        <li>calcula a saída y, o ruído estimado;</li>
+        <li>calcula o erro e = d − y, que é o ECG limpo;</li>
+        <li>corrige os pesos com a regra LMS.</li>
+      </ul>
+      <p class="deixa">“Próxima amostra” percorre as 4 linhas de uma amostra (os pesos começam em zero). Mostrar uma ou duas amostras e depois “acelerar” (até 2 s de sinal): os pesos sobem e se estabilizam no valor certo. R recomeça.</p>
     </div>
   </section>
 
@@ -437,7 +610,30 @@
   <section class="tela" id="t-colab" data-id="colab" data-num="10" data-bloco="3" data-grupo="b3"
            data-titulo="Agora no Colab" data-passos="1">
     <h1 class="titulo">Agora no <span class="chave">Colab</span></h1>
-    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Botão “Ver no Colab” e o nome do notebook adaline_ecg.ipynb.</p></div>
+    <p class="chamada">Esse mesmo código, em Python, rodando sobre um ECG real.</p>
+
+    <div class="caderno cartao com-faixa">
+      <div class="faixa amarelo">Notebook</div>
+      <div class="corpo">
+        <div class="arquivo">adaline_ecg.ipynb</div>
+        <a class="btn ativo abrir" id="colab-link" target="_blank" rel="noopener">
+          Ver no Colab
+          <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M7 19 L19 7 M9 7 L19 7 L19 17" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <div class="obs" id="colab-obs">abre numa nova aba</div>
+      </div>
+    </div>
+
+    <div class="lista cartao">
+      <div class="nome">No Colab, vamos ver</div>
+      <ol>
+        <li><span class="n">1</span><span>A célula do Adaline: as mesmas 4 linhas</span></li>
+        <li><span class="n">2</span><span>O experimento 1 rodando</span></li>
+        <li><span class="n">3</span><span>O SNR antes e depois e o gráfico</span></li>
+      </ol>
+      <div class="volta">Depois, voltamos para esta aba.</div>
+    </div>
+
     <div class="notas">
       <p><b>“Esse mesmo código, em Python, rodando sobre um ECG real.”</b></p>
       <p class="deixa">Clicar em “Ver no Colab”, mostrar a célula do Adaline, rodar a célula do experimento 1, mostrar o SNR antes e depois e o primeiro gráfico. Voltar para a aba do site.</p>
@@ -636,6 +832,9 @@
 <script src="js/telas/widrow.js"></script>
 <script src="js/telas/neuronio.js"></script>
 <script src="js/telas/seno.js"></script>
+<script src="js/telas/lms.js"></script>
+<script src="js/telas/algoritmo.js"></script>
+<script src="js/telas/colab.js"></script>
 <script src="js/telas/exp3.js"></script>
 <script src="js/navegacao.js"></script>
 </body>
