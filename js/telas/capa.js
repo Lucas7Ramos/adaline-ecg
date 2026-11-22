@@ -1,92 +1,40 @@
 /* Tela 1: Capa.
- * Passo 1: ECG ruidoso correndo (registro 100 + 60 Hz fixo, como no experimento 1).
- * Passo 2: o Adaline liga (pesos em zero, µ = 0,01) e o ruído some ao vivo.
+ * Imagem estática, sem animação: o quadro do ECG dividido ao meio.
+ *   Esquerda: o trecho do registro 100 + ruído fixo de 60 Hz (como no experimento 1), em laranja.
+ *   Direita:  o mesmo trecho, só o ECG limpo (o sinal original), em preto.
+ * As duas metades usam a mesma escala vertical, para a plateia ver que é o mesmo sinal.
  */
 (function (g) {
   'use strict';
 
-  var S = g.Sinais, A = g.Adaline;
-  var MU = 0.01;
+  var S = g.Sinais;
 
-  var monitor, adaline, ligado = false, ecg, volta, cabecalho;
+  // Trecho de dois batimentos inteiros (de 0,63 s a 2,34 s do registro 100).
+  var INICIO = Math.round(0.63 * S.FS);
+  var FIM = Math.round(2.34 * S.FS);
+  var LO = -0.85, HI = 1.85;              // mV, a mesma faixa nas duas metades
+  var CAIXA = { x: 14, y: 10, w: 550, h: 126 };
 
-  /* Ponto de volta do trecho de 10 s, escolhido para a emenda não dar salto. */
-  function pontoDeVolta(x) {
-    var melhor = x.length, custo = Infinity;
-    for (var L = x.length - 360; L < x.length; L++) {
-      var c = Math.abs(x[L] - x[0]) + 4 * Math.abs((x[L] - x[L - 1]) - (x[1] - x[0]));
-      if (c < custo) { custo = c; melhor = L; }
-    }
-    return melhor;
-  }
-
-  function gerar(n) {
-    var limpo = ecg[n % volta];
-    var d = limpo + S.ruidoFixo(n);
-    if (!ligado) return { v: d, k: 'sujo' };
-    var f = A.faseFixa(n);
-    return { v: adaline.passo(d, Math.cos(f), Math.sin(f)), k: 'limpo' };
-  }
-
-  function mostrarEstado() {
-    cabecalho.className = 'faixa ' + (ligado ? 'azul' : 'laranja');
-    cabecalho.textContent = ligado
-      ? 'Adaline ligado: o ruído some e fica o ECG'
-      : 'ECG + ruído de 60 Hz';
-  }
-
-  /* Recomeça: janela cheia de sinal ruidoso; no passo 2, liga o Adaline do zero. */
-  function recomecar(p) {
-    ligado = false;
-    adaline.reiniciar();
-    monitor.reiniciar();
-    ligado = p >= 2;
-    mostrarEstado();
-    if (S.movimentoReduzido()) monitor.avancar(ligado ? 2.5 : 0);
+  function desenhar(svg, x, cor) {
+    svg.innerHTML = '';
+    S.el('path', {
+      d: S.caminho(x, CAIXA, LO, HI, INICIO, FIM),
+      fill: 'none', stroke: cor, 'stroke-width': 3.5,
+      'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+    }, svg);
   }
 
   g.Telas = g.Telas || {};
   g.Telas.capa = {
     iniciar: function (sec) {
-      ecg = S.ecg();
-      volta = pontoDeVolta(ecg);
-      adaline = new A.Neuronio(MU);
-      cabecalho = sec.querySelector('#capa-estado');
       if (g.CONFIG && g.CONFIG.disciplina) {
         sec.querySelector('#capa-disciplina').textContent = g.CONFIG.disciplina;
       }
-      monitor = new S.Monitor({
-        svg: sec.querySelector('#capa-monitor'),
-        caixa: { x: 16, y: 10, w: 1130, h: 128 },
-        janela: 2,
-        // Câmera lenta: o sinal corre a 35% do tempo real para dar de ver o ruído.
-        velocidade: 0.35,
-        lo: -0.85,
-        hi: 1.85,
-        gerar: gerar,
-        tipos: {
-          sujo: { cor: '#ff6b3d', largura: 3 },
-          limpo: { cor: '#111111', largura: 3.5 }
-        }
-      });
-    },
-    entrar: function (sec, p) {
-      recomecar(p);
-      monitor.iniciar();
-    },
-    passo: function (sec, p, anterior) {
-      if (!anterior) return; // já tratado em entrar
-      var on = p >= 2;
-      if (on && !ligado) adaline.reiniciar();
-      ligado = on;
-      mostrarEstado();
-      if (S.movimentoReduzido()) monitor.avancar(2.5);
-    },
-    sair: function () {
-      monitor.parar();
-    },
-    reiniciar: function (sec, p) {
-      recomecar(p);
+      var ecg = S.ecg();
+      var sujo = new Float64Array(ecg.length);
+      for (var n = 0; n < ecg.length; n++) sujo[n] = ecg[n] + S.ruidoFixo(n);
+      desenhar(sec.querySelector('#capa-antes'), sujo, '#ff6b3d');
+      desenhar(sec.querySelector('#capa-depois'), ecg, '#111111');
     }
   };
 })(window);

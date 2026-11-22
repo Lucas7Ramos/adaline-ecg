@@ -1,11 +1,11 @@
-/* Navegação: escala 16:9, telas, passos da seta, teclas, índice, notas e endereço.
+/* Navegação: escala 16:9, telas, passos da seta, teclas, índice e endereço.
  *
  * Teclas:  → espaço PageDown  avança (primeiro os passos, depois a tela)
  *          ← PageUp           volta
  *          Home / End         primeira / última tela da sequência principal
  *          M                  índice          F  tela cheia
- *          R                  reinicia a demo N  notas do apresentador
- *          Esc                fecha índice e notas
+ *          R                  reinicia a demo
+ *          Esc                fecha o índice
  * Clique nas bordas laterais: volta (esquerda) ou avança (direita).
  * Endereço: #widrow abre a tela; #exp3/2 abre no passo 2.
  *
@@ -39,7 +39,6 @@
   var indicadorRotulo = document.getElementById('indicador-rotulo');
   var indicadorPontos = document.getElementById('indicador-pontos');
   var numeroTela = document.getElementById('numero-tela');
-  var painelNotas = document.getElementById('notas');
   var indice = document.getElementById('indice');
 
   // Sequência principal: todas as telas (a última é a de perguntas).
@@ -113,7 +112,6 @@
       chamar(sec, 'passo', p, anterior);
     }
     atualizarEndereco();
-    if (!painelNotas.hidden) mostrarNotas();
   }
 
   function avancar() {
@@ -168,41 +166,6 @@
       if (telas[i].dataset.id === id) return { i: i, p: parseInt(m[1], 10) || 1 };
     }
     return { i: 0, p: 1 };
-  }
-
-  /* ---------- Notas (N) ---------- */
-
-  /* Troca {{exp1.antes}} pelo valor de Experimentos.resumo() (que vem de
-   * data/resultados.js). Casas decimais: {{exp2.tempoRapido|2}}; padrão 1.
-   * {{exp2.muMin|n}} escreve o número como está (0,001). */
-  function preencher(html) {
-    var R = null;
-    return html.replace(/\{\{([\w.]+)(?:\|(\w+))?\}\}/g, function (_, caminho, casas) {
-      if (!R) R = window.Experimentos.resumo();
-      var v = R;
-      caminho.split('.').forEach(function (p) { v = v == null ? v : v[p]; });
-      if (typeof v === 'number') {
-        if (casas === 'n') return String(v).replace('.', ',');
-        return window.Sinais.fmt(v, casas == null ? 1 : parseInt(casas, 10));
-      }
-      return v == null ? '[?]' : String(v);
-    });
-  }
-
-  function mostrarNotas() {
-    var sec = telas[atual];
-    var fonte = sec.querySelector('.notas');
-    var num = sec.dataset.num ? 'tela ' + sec.dataset.num + ' · ' : '';
-    painelNotas.innerHTML =
-      '<div class="cabeca">NOTAS · ' + num + sec.dataset.titulo +
-      ' · passo ' + passoAtual + ' de ' + totalPassos(sec) + '  (N fecha)</div>' +
-      (fonte ? preencher(fonte.innerHTML) : '<p>Sem notas.</p>');
-    painelNotas.hidden = false;
-  }
-
-  function alternarNotas() {
-    if (painelNotas.hidden) mostrarNotas();
-    else painelNotas.hidden = true;
   }
 
   /* ---------- Índice (M) ---------- */
@@ -268,8 +231,7 @@
     var k = ev.key;
 
     if (k === 'Escape') {
-      if (!indice.hidden) { fecharIndice(); ev.preventDefault(); return; }
-      if (!painelNotas.hidden) { painelNotas.hidden = true; ev.preventDefault(); }
+      if (!indice.hidden) { fecharIndice(); ev.preventDefault(); }
       return;
     }
     if (k === 'm' || k === 'M') {
@@ -297,8 +259,6 @@
         alternarTelaCheia(); break;
       case 'r': case 'R':
         reiniciar(); break;
-      case 'n': case 'N':
-        alternarNotas(); break;
       default:
         return;
     }
@@ -320,7 +280,7 @@
   var BORDA = 48; // px na base 1280 (fica dentro da margem livre de 56 px)
   document.addEventListener('click', function (ev) {
     if (!indice.hidden) return;
-    if (ev.target.closest('button, input, a, label, select, .notas-painel, .indice')) return;
+    if (ev.target.closest('button, input, a, label, select, .indice')) return;
     var r = palco.getBoundingClientRect();
     var x = (ev.clientX - r.left) / escala;
     if (x < BORDA) voltar();

@@ -19,8 +19,6 @@
     data-etiqueta  texto da pílula do indicador (padrão: nome do bloco)
     data-passos    quantos passos a seta revela (o passo 1 já aparece ao chegar)
   Elementos com data-passo="n" aparecem no passo n.
-  <div class="notas"> é o texto "Dizer" do roteiro (tecla N).
-  {{exp1.snr_antes_db}} etc. nas notas vêm de data/resultados.js.
 -->
 
 <main id="palco" aria-live="polite">
@@ -28,7 +26,7 @@
 
   <!-- ===================== 1. Capa ===================== -->
   <section class="tela" id="t-capa" data-id="capa" data-num="" data-grupo="abertura"
-           data-titulo="Capa" data-passos="2">
+           data-titulo="Capa" data-passos="1">
     <div class="sobretitulo rotulo-mono">Seminário · Redes Neurais Artificiais</div>
     <h1 class="titulo"><span class="chave">Adaline</span> como filtro adaptativo para ECG</h1>
     <p class="subtitulo">Um neurônio que aprende o ruído da rede elétrica e devolve o batimento limpo.</p>
@@ -40,18 +38,19 @@
     </div>
 
     <div class="monitor cartao com-faixa">
-      <div class="faixa laranja" id="capa-estado">ECG + ruído de 60 Hz</div>
-      <svg id="capa-monitor" width="1162" height="148" viewBox="0 0 1162 148" aria-label="ECG correndo como num monitor"></svg>
+      <div class="metade">
+        <div class="faixa laranja">Antes: ECG + ruído de 60 Hz</div>
+        <svg id="capa-antes" width="578" height="146" viewBox="0 0 578 146" aria-label="Trecho do registro 100 com ruído de 60 Hz"></svg>
+      </div>
+      <div class="metade">
+        <div class="faixa azul">Depois: o Adaline remove o ruído</div>
+        <svg id="capa-depois" width="578" height="146" viewBox="0 0 578 146" aria-label="O mesmo trecho do registro 100, só o ECG limpo"></svg>
+      </div>
     </div>
 
     <div class="rodape">
       <div><div class="rotulo-mono">Disciplina</div><div class="valor" id="capa-disciplina">Inteligência Artificial</div></div>
       <div><div class="rotulo-mono">Apresentação</div><div class="valor">Lucas Cavalcanti e Josué Costa</div></div>
-    </div>
-
-    <div class="notas">
-      <p>O título, os nomes do grupo e a frase-gancho: <b>“vamos ensinar um neurônio a ouvir o coração no meio do barulho da rede elétrica”</b>.</p>
-      <p class="deixa">→ o Adaline liga: o ruído se apaga e o ECG limpo continua correndo. É uma prévia do resultado do trabalho inteiro.</p>
     </div>
   </section>
 
@@ -86,15 +85,6 @@
         <span class="rot">onda P</span><div class="barra"><div class="cheio" id="ecg-barra-p"></div></div><span class="val" id="ecg-val-p">0,1 mV</span>
       </div>
     </div>
-
-    <div class="notas">
-      <ul>
-        <li>O ECG registra a atividade elétrica do coração, com amplitude de poucos milivolts.</li>
-        <li>Cada batimento tem partes com nome (onda P, complexo QRS, onda T), e o médico usa a forma delas para diagnosticar arritmias e outros problemas.</li>
-        <li>Detalhes pequenos importam: a onda P tem uma fração da altura do QRS.</li>
-      </ul>
-      <p class="deixa">Passos: batimento desenhado → onda P → QRS → onda T → a proporção P × QRS.</p>
-    </div>
   </section>
 
   <!-- ===================== 3. Interferência de 60 Hz ===================== -->
@@ -128,16 +118,6 @@
     <div class="pergunta em-uma-frase" data-passo="4">
       <span class="pilula">a pergunta</span>
       <span class="frase">E se, em vez de cortar uma faixa fixa, o filtro aprendesse o ruído?</span>
-    </div>
-
-    <div class="notas">
-      <ul>
-        <li>Os cabos do eletrocardiógrafo e o corpo do paciente funcionam como antena e captam a rede elétrica, que no Brasil é de 60 Hz.</li>
-        <li>O ruído pode ter amplitude parecida com a do próprio ECG e esconde justamente os detalhes pequenos.</li>
-        <li>A rede não é perfeita: a frequência oscila um pouco e a intensidade muda quando alguém liga um aparelho perto. Isso vai importar no fim.</li>
-        <li>Pergunta que guia o resto: <b>“e se, em vez de cortar uma faixa fixa, o filtro aprendesse o ruído?”</b></li>
-      </ul>
-      <p class="deixa">Passos: as duas ondas → elas viram uma (botão com/sem ruído) → lupa na onda P → a pergunta.</p>
     </div>
   </section>
 
@@ -200,16 +180,6 @@
         <span class="formula">w <span class="seta-txt">←</span> w + 2·µ·e·x</span>
         <span class="txt">A cada amostra, o erro volta e corrige w<sub>1</sub> e w<sub>2</sub></span>
       </div>
-    </div>
-
-    <div class="notas">
-      <ul>
-        <li>Bernard Widrow criou o Adaline em 1960 e, em 1975, mostrou que ele resolve exatamente este problema (cancelamento adaptativo de ruído).</li>
-        <li>São duas entradas: a primária (ECG + ruído) e a referência (um sinal tirado da tomada, que tem o 60 Hz e nada do coração).</li>
-        <li>O Adaline transforma a referência numa cópia do ruído, e essa cópia é subtraída da entrada primária.</li>
-        <li>O ponto principal: o que sobra da subtração, o erro, é o ECG limpo. Como a referência não tem nada do coração, o Adaline não consegue cancelar o ECG, só o ruído.</li>
-      </ul>
-      <p class="deixa">Passos: d(n) → y(n) → e(n) → linha de baixo (x → Adaline ← LMS).</p>
     </div>
   </section>
 
@@ -328,21 +298,6 @@
       <span class="pilula">a diferença</span>
       <span class="frase">Num classificador, o erro é algo a zerar; aqui, o erro é o resultado.</span>
     </div>
-
-    <div class="notas">
-      <p>A tradução do problema para o vocabulário de redes neurais. Uma linha da tabela por passo:</p>
-      <ul>
-        <li><b>Entradas:</b> a referência, cos e sen de 60 Hz.</li>
-        <li><b>Pesos:</b> w<sub>1</sub> e w<sub>2</sub>, que começam em zero.</li>
-        <li><b>Saída:</b> y = w<sub>1</sub>·cos + w<sub>2</sub>·sen, o ruído estimado. Não tem função de ativação.</li>
-        <li><b>Valor desejado:</b> d = ECG + ruído.</li>
-        <li><b>Erro:</b> e = d − y, que é o ECG limpo.</li>
-        <li><b>Função de custo:</b> e², que o Adaline tenta minimizar.</li>
-        <li><b>Aprender:</b> ajustar w<sub>1</sub> e w<sub>2</sub> a cada amostra (aprendizado online).</li>
-      </ul>
-      <p>Fechar com: <b>“num classificador, o erro é algo a zerar; aqui, o erro é o resultado”</b>.</p>
-      <p class="deixa">Passos 1 a 7: uma linha da tabela por seta (a parte do neurônio acende junto). Passo 8: a frase final.</p>
-    </div>
   </section>
 
   <!-- ===================== 6. Por que seno e cosseno? ===================== -->
@@ -389,11 +344,6 @@
       <div class="numero-grande"><span id="seno-erro">100</span><span class="unidade"> %</span></div>
       <div class="barra"><div id="seno-barra"></div></div>
       <div class="sub">do ruído original</div>
-    </div>
-
-    <div class="notas">
-      <p>Somando um cosseno e um seno com pesos diferentes, dá para montar uma senoide de 60 Hz com qualquer amplitude e qualquer fase. Os dois pesos são os dois “botões” que o Adaline gira até a cópia encaixar no ruído real.</p>
-      <p class="deixa">Com o tempo curto, mexer pouco nos sliders e usar logo o botão “deixar o Adaline fazer” (é o LMS de verdade, µ = 0,01, em câmera lenta). “Zerar” ou R volta os pesos para zero.</p>
     </div>
   </section>
 
@@ -478,11 +428,6 @@
       <span class="pilula">em uma frase</span>
       <span class="frase">O Perceptron sabe se errou; o Adaline sabe quanto errou.</span>
     </div>
-
-    <div class="notas">
-      <p>Os dois são um neurônio linear. O Perceptron mede o erro depois da função degrau: só sabe se acertou ou errou. O Adaline mede o erro antes, na saída linear: sabe quanto errou, e por isso pode usar gradiente descendente. Aqui não há classificação: o Adaline faz estimação contínua.</p>
-      <p class="deixa">Passos: os dois neurônios (o texto amarelo diz onde o erro é medido) → “acertou ou não” × “quanto errou” → a frase. Versão curta: “o Perceptron sabe se errou, o Adaline sabe quanto errou”.</p>
-    </div>
   </section>
 
   <!-- ===================== 8. A regra LMS ===================== -->
@@ -513,31 +458,15 @@
 
     <div class="controle-mu cartao" data-passo="2">
       <div class="linha1">
-        <label for="lms-mu">Taxa de aprendizado µ</label>
-        <span class="valor-amarelo" id="lms-mu-txt">0,01</span>
+        <span class="rotulo">Taxa de aprendizado</span>
+        <span class="valor-amarelo">µ = 0,01</span>
       </div>
-      <input id="lms-mu" class="slider" type="range" min="0" max="5" step="1" value="3"
-             aria-label="Taxa de aprendizado µ">
-      <div class="atalhos">
-        <button type="button" class="btn" data-mu="pequeno" aria-pressed="false">pequeno</button>
-        <button type="button" class="btn" data-mu="medio" aria-pressed="true">médio</button>
-        <button type="button" class="btn" data-mu="grande" aria-pressed="false">grande</button>
-        <button type="button" class="btn" id="lms-soltar">soltar de novo</button>
-      </div>
+      <button type="button" class="btn" id="lms-soltar">soltar de novo</button>
     </div>
 
     <div class="frase-final em-uma-frase" data-passo="3">
       <span class="pilula">regra delta</span>
       <span class="frase">Uma amostra por vez: o filtro aprende enquanto filtra.</span>
-    </div>
-
-    <div class="notas">
-      <ul>
-        <li>O objetivo é diminuir e². A regra LMS dá um passo na direção que mais reduz o erro: w ← w + 2·µ·e·x.</li>
-        <li>µ é a taxa de aprendizado, o tamanho do passo.</li>
-        <li>É a regra delta (Widrow-Hoff) aplicada a uma amostra por vez: o filtro aprende enquanto filtra.</li>
-      </ul>
-      <p class="deixa">A bolinha é o LMS de verdade sobre o registro 100 (câmera lenta, 1/3 do tempo real; um ponto do caminho por ciclo de 60 Hz). Para sozinha em 6 s de sinal. Passo 2: slider de µ, de 0,001 a 0,05. “Pequeno” (0,002): passos curtos e lentos. “Grande” (0,05): chega rápido, mas fica tremendo em volta do fundo (o µ maior aparece no experimento 2). Passo 3: a frase. R ou “soltar de novo” recomeça.</p>
     </div>
   </section>
 
@@ -593,17 +522,6 @@
         <span class="anotacao" id="alg-estavel">os pesos se estabilizaram</span>
       </div>
     </div>
-
-    <div class="notas">
-      <p>O que o Adaline faz em cada amostra, nas 4 linhas do loop:</p>
-      <ul>
-        <li>monta a referência x<sub>1</sub> = cos e x<sub>2</sub> = sen de 60 Hz;</li>
-        <li>calcula a saída y, o ruído estimado;</li>
-        <li>calcula o erro e = d − y, que é o ECG limpo;</li>
-        <li>corrige os pesos com a regra LMS.</li>
-      </ul>
-      <p class="deixa">“Próxima amostra” percorre as 4 linhas de uma amostra (os pesos começam em zero). Mostrar uma ou duas amostras e depois “acelerar” (até 2 s de sinal): os pesos sobem e se estabilizam no valor certo. R recomeça.</p>
-    </div>
   </section>
 
   <!-- ===================== 10. Agora no Colab ===================== -->
@@ -632,11 +550,6 @@
         <li><span class="n">3</span><span>O SNR antes e depois e o gráfico</span></li>
       </ol>
       <div class="volta">Depois, voltamos para esta aba.</div>
-    </div>
-
-    <div class="notas">
-      <p><b>“Esse mesmo código, em Python, rodando sobre um ECG real.”</b></p>
-      <p class="deixa">Clicar em “Ver no Colab”, mostrar a célula do Adaline, rodar a célula do experimento 1, mostrar o SNR antes e depois e o primeiro gráfico. Voltar para a aba do site.</p>
     </div>
   </section>
 
@@ -691,11 +604,6 @@
     <div class="resposta em-uma-frase" data-passo="3">
       <span class="pilula">em uma frase</span>
       <span class="frase">Sim, e o que sobra no erro é o ECG.</span>
-    </div>
-
-    <div class="notas">
-      <p>Com ruído fixo de 60 Hz (µ = {{exp1.mu|n}}), o Adaline aprende o ruído em cerca de <b>{{exp1.tempo}} s</b>, e o SNR sobe de cerca de <b>{{exp1.antes}} dB</b> para cerca de <b>{{exp1.depois}} dB</b>: um ganho de cerca de {{exp1.ganho|0}} dB.</p>
-      <p class="deixa">Passo 1: o ECG ruidoso correndo (câmera lenta, 40% do tempo real). Clicar em “ligar o Adaline” (ou seta →, passo 2): os pesos começam em zero e o ruído some ao vivo; os pesos sobem até o valor certo, o pico de 60 Hz encolhe e o SNR sobe. O SNR do painel é medido ao vivo (janela de 0,5 s) e oscila um pouco; o número a dizer é o do Colab, escrito embaixo. Passo 3: a resposta. R ou “recomeçar” volta ao ECG ruidoso.</p>
     </div>
   </section>
 
@@ -753,17 +661,6 @@
     <div class="resposta em-uma-frase" data-passo="4">
       <span class="pilula">em uma frase</span>
       <span class="frase">µ maior aprende mais rápido e erra mais depois de aprender.</span>
-    </div>
-    <div class="notas">
-      <ul>
-        <li>µ grande aprende quase na hora, mas fica “nervoso”: o ECG o empurra a cada batimento e o resultado sai tremido.</li>
-        <li>µ pequeno deixa o ECG muito limpo, mas demora segundos para aprender.</li>
-        <li>Não existe µ perfeito: é um compromisso entre velocidade e precisão.</li>
-        <li>No Colab (µ de {{exp2.muMin|n}} a {{exp2.muMax|n}}): com µ = {{exp2.muMin|n}}, leva cerca de <b>{{exp2.tempoMuMin}} s</b> para aprender e chega a <b>{{exp2.snrMuMin}} dB</b>. O mais rápido é µ = {{exp2.muRapido|n}}: aprende em <b>{{exp2.tempoRapido|2}} s</b>, mas termina com <b>{{exp2.snrRapido}} dB</b>.</li>
-        <li>No maior µ testado ({{exp2.muMax|n}}), o tempo volta a subir ({{exp2.tempoMuMax|2}} s) e o SNR cai para {{exp2.snrMuMax}} dB.</li>
-      </ul>
-      <p class="deixa">Passo 1: slider de µ (só os valores testados no Colab) e atalhos pequeno / médio / grande; cada mudança recomeça o filtro do zero, em tempo real. A faixa laranja é o filtro ainda aprendendo; o tempo de “aprendeu em” é medido ao vivo com o mesmo critério do Colab (erro dos pesos abaixo de 10%). Com µ grande, o traço preto treme em volta do ECG original tracejado. Passo 2: barras de velocidade e precisão. Passo 3: a tesoura (números do Colab, ponto amarelo no µ atual). Passo 4: a resposta. R recomeça o filtro com o mesmo µ.</p>
-      <p class="deixa">Resposta: “µ maior aprende mais rápido e erra mais depois de aprender”.</p>
     </div>
   </section>
 
@@ -826,17 +723,6 @@
       <span class="pilula">em uma frase</span>
       <span class="frase">Adaptativo vale quando o ruído muda; com a rede estável, um filtro fixo basta.</span>
     </div>
-
-    <div class="notas">
-      <ul>
-        <li>O filtro comum para este problema é o notch fixo, que corta uma faixa estreita em volta de 60 Hz.</li>
-        <li>Com a rede estável, um notch bem ajustado é até melhor que o Adaline.</li>
-        <li>Quando a frequência da rede oscila, a frequência sai do “buraco” do notch estreito e o ruído escapa. Alargar o buraco segura o ruído, mas começa a deformar o ECG.</li>
-        <li>O Adaline acompanha a variação, desde que a referência acompanhe a rede (o sensor na tomada).</li>
-      </ul>
-      <p>Em 0 Hz, o melhor notch (Q = {{exp3.qEstavel|n}}) vence por pouco: {{exp3.notchEstavel}} × {{exp3.adalineEstavel}} dB. A partir de {{exp3.virada|n}} Hz de desvio, o Adaline vence.</p>
-      <p class="deixa">Passo 1: começar em 0 Hz (o melhor notch vence) e subir o slider. Passo 2: gráfico SNR × desvio. Passo 3: trocar a referência para “fixa em 60 Hz”: o Adaline perde a vantagem. Passo 4: a resposta.</p>
-    </div>
   </section>
 
   <!-- ===================== 14. Análise ===================== -->
@@ -872,18 +758,6 @@
     <div class="conclusao em-uma-frase" data-passo="4">
       <span class="pilula">conclusão</span>
       <span class="frase">Um único neurônio linear, aprendendo amostra a amostra, remove o ruído de 60 Hz e se adapta quando a rede varia, desde que tenha uma boa referência.</span>
-    </div>
-
-    <div class="notas">
-      <p>Uma conclusão por experimento, cada uma com o número que a sustenta, dito em voz alta (números do Colab):</p>
-      <ul>
-        <li><b>1 · Funciona:</b> o SNR vai de {{exp1.antes}} para {{exp1.depois}} dB, um ganho de <b>+{{exp1.ganho}} dB</b>. O erro é o ECG limpo.</li>
-        <li><b>2 · Papel de µ:</b> o aprendizado mais rápido leva <b>{{exp2.tempoRapido|2}} s</b> (µ = {{exp2.muRapido|n}}), mas o ECG final fica {{exp2.perdaRapido}} dB pior que com µ = {{exp2.muMin|n}}. É um compromisso entre velocidade e precisão.</li>
-        <li><b>3 · Por que adaptativo:</b> com a rede estável, o notch basta; a partir de <b>{{exp3.virada|n}} Hz</b> de desvio, o Adaline vence. Em {{exp3.desvioMax|n}} Hz: Adaline {{exp3.adalineFim}} dB × melhor notch {{exp3.melhorFim}} dB.</li>
-      </ul>
-      <p>Fechar com a conclusão geral:</p>
-      <p><b>“Um único neurônio linear, aprendendo amostra a amostra, remove o ruído de 60 Hz e se adapta quando a rede varia, desde que tenha uma boa referência.”</b></p>
-      <p class="deixa">Passos 1 a 3: uma coluna por seta (a miniatura se desenha ao aparecer). Passo 4: a conclusão geral.</p>
     </div>
   </section>
 
@@ -936,16 +810,6 @@
       <span class="pilula">o mesmo princípio</span>
       <span class="frase">fones com cancelamento de ruído · cancelamento de eco · ECG fetal</span>
     </div>
-
-    <div class="notas">
-      <ul>
-        <li>A vantagem do Adaline depende de uma referência que acompanhe o ruído.</li>
-        <li>O ruído deste trabalho foi simulado, e os desvios de 0,3 a 0,5 Hz são exagerados de propósito: na prática a rede fica perto de ±0,1 Hz.</li>
-        <li>Extensões naturais: harmônicos de 120 e 180 Hz (um par seno/cosseno a mais por frequência), oscilação da linha de base pela respiração, e a variante NLMS.</li>
-        <li>Fechar: o mesmo princípio de “aprender o ruído e subtrair” está em fones com cancelamento de ruído, no cancelamento de eco e na separação do ECG do bebê do ECG da mãe.</li>
-      </ul>
-      <p class="deixa">Passo 1: o quadro de limitação. Passo 2: as extensões (o Adaline ganha os pares de 120 e 180 Hz, em azul). Passo 3: a faixa com as três aplicações.</p>
-    </div>
   </section>
 
   <!-- ===================== 16. Perguntas ===================== -->
@@ -963,11 +827,6 @@
       <div><div class="rotulo-mono">Disciplina</div><div class="valor" id="perguntas-disciplina">Inteligência Artificial</div></div>
       <div><div class="rotulo-mono">Apresentação</div><div class="valor">Lucas Cavalcanti e Josué Costa</div></div>
     </div>
-
-    <div class="notas">
-      <p>Agradecer e abrir para perguntas.</p>
-      <p class="deixa">Para voltar a uma tela numa pergunta: M abre o índice (ou use o endereço, ex.: #exp3). O ECG que corre aqui é a saída do Adaline, já depois de aprender. R recomeça o monitor.</p>
-    </div>
   </section>
 
   <!-- ===================== Elementos fixos ===================== -->
@@ -976,7 +835,6 @@
     <span class="pontos" id="indicador-pontos" aria-hidden="true"></span>
   </div>
   <div class="numero-tela" id="numero-tela" hidden></div>
-  <div class="notas-painel" id="notas" hidden></div>
   <div class="indice" id="indice" hidden></div>
 </main>
 

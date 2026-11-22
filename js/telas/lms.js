@@ -11,7 +11,9 @@
  * entre esses pontos. Só o último 1,5 s de caminho fica visível, apagando aos
  * poucos. A descida para sozinha em 6 s de sinal.
  *
- * Passo 1: tigela + fórmula.  Passo 2: slider de µ.  Passo 3: frase final.
+ * µ fica fixo em 0,01 (o efeito de µ é mostrado só no experimento 2).
+ *
+ * Passo 1: tigela + fórmula.  Passo 2: µ = 0,01 e o botão "soltar de novo".  Passo 3: frase final.
  */
 (function (g) {
   'use strict';
@@ -26,11 +28,7 @@
   var RASTRO = 1.5;           // s de caminho que ficam visíveis
   var PEDACOS = 10;           // o rastro é desenhado em pedaços, do mais apagado ao mais forte
 
-  // µ em escala log (1-2-5), os mesmos valores do Colab nesta faixa.
-  // O µ maior (0,1 e 0,2) fica para o experimento 2.
-  var MUS = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05];
-  var ATALHOS = { pequeno: 0.002, medio: 0.01, grande: 0.05 };
-  var MU_INICIAL = 0.01;
+  var MU = 0.01;
 
   var RAIOS = [0.1, 0.2, 0.3, 0.4, 0.5];   // curvas de nível (distância equivalente)
 
@@ -43,7 +41,7 @@
 
   var el = {};
   var ecg, volta, wEst, R;
-  var iMu, neuronio, n = 0;
+  var neuronio, n = 0;
   var pontos = [];            // [w1, w2] a cada ciclo; pontos[0] = (0, 0)
   var progresso = 0;          // posição da bolinha, em ciclos (fracionário)
   var anim = null;
@@ -192,7 +190,7 @@
 
   function soltar() {
     parar();
-    neuronio = new A.Neuronio(MUS[iMu]);
+    neuronio = new A.Neuronio(MU);
     n = 0;
     pontos = [[0, 0]];
     var fim = DURACAO * CICLOS_S;
@@ -216,57 +214,22 @@
     anim = requestAnimationFrame(quadro);
   }
 
-  /* ---------- µ ---------- */
-
-  function indiceDe(v) {
-    var melhor = 0;
-    for (var i = 1; i < MUS.length; i++) {
-      if (Math.abs(Math.log(MUS[i] / v)) < Math.abs(Math.log(MUS[melhor] / v))) melhor = i;
-    }
-    return melhor;
-  }
-
-  function mostrarMu() {
-    el.slider.value = iMu;
-    el.slider.style.setProperty('--pct', (iMu / (MUS.length - 1)) * 100 + '%');
-    el.muTxt.textContent = String(MUS[iMu]).replace('.', ',');
-    el.atalhos.forEach(function (b) {
-      b.setAttribute('aria-pressed', String(indiceDe(ATALHOS[b.dataset.mu]) === iMu));
-    });
-  }
-
-  function escolherMu(i) {
-    iMu = Math.max(0, Math.min(MUS.length - 1, i));
-    mostrarMu();
-    soltar();
-  }
-
   g.Telas = g.Telas || {};
   g.Telas.lms = {
     iniciar: function (sec) {
       ecg = S.ecg();
       volta = S.pontoDeVolta(ecg);
-      iMu = indiceDe(MU_INICIAL);
 
       el.svg = sec.querySelector('#lms-tigela');
       el.estado = sec.querySelector('#lms-estado');
-      el.slider = sec.querySelector('#lms-mu');
-      el.muTxt = sec.querySelector('#lms-mu-txt');
-      el.atalhos = [].slice.call(sec.querySelectorAll('[data-mu]'));
-      el.slider.max = MUS.length - 1;
 
       calcularTigela();
       enquadrar();
       montar();
 
-      el.slider.addEventListener('input', function () { escolherMu(+el.slider.value); });
-      el.atalhos.forEach(function (b) {
-        b.addEventListener('click', function () { escolherMu(indiceDe(ATALHOS[b.dataset.mu])); });
-      });
       sec.querySelector('#lms-soltar').addEventListener('click', soltar);
     },
     entrar: function () {
-      mostrarMu();
       soltar();
     },
     sair: function () {

@@ -115,7 +115,7 @@
     return { mus: C.mus, tempo: C.tempo_conv_s, snr: C.snr_final_db };
   }
 
-  /* Números derivados que as telas e as notas citam (telas 11, 12, 13 e 14).
+  /* Números derivados que as telas citam (telas 11, 12, 13 e 14).
    * Tudo sai de RESULTADOS_COLAB; nada escrito à mão. */
   function resumo() {
     var R = g.RESULTADOS_COLAB || {};

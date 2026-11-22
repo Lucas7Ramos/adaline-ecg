@@ -61,7 +61,12 @@
   width: 1168px;
   height: 200px;
 }
-#t-capa .monitor .faixa { transition: background-color 250ms ease-out, color 250ms ease-out; }
+#t-capa .monitor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+/* Linha preta vertical entre o antes e o depois. */
+#t-capa .monitor .metade + .metade { border-left: var(--borda); }
 #t-capa .monitor svg { display: block; }
 
 #t-capa .rodape {
@@ -768,7 +773,7 @@
   top: 376px;
   width: 652px;
   height: 184px;
-  padding: 12px 24px;
+  padding: 16px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -778,10 +783,9 @@
   align-items: center;
   justify-content: space-between;
 }
-#t-lms .controle-mu label { font-weight: 700; font-size: 24px; }
-#t-lms .controle-mu .valor-amarelo { font-size: 30px; min-width: 110px; text-align: center; }
-#t-lms .controle-mu .atalhos { display: flex; gap: 12px; }
-#t-lms .controle-mu #lms-soltar { margin-left: auto; }
+#t-lms .controle-mu .rotulo { font-weight: 700; font-size: 28px; }
+#t-lms .controle-mu .valor-amarelo { font-size: 48px; padding: 4px 16px; }
+#t-lms .controle-mu #lms-soltar { align-self: flex-end; }
 
 #t-lms .frase-final { left: 572px; width: 652px; }
 #t-lms .frase-final .frase { font-size: 26px; }
