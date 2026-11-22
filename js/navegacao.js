@@ -28,11 +28,10 @@
     { id: 'b3', nome: '3 · Algoritmo' },
     { id: 'b4', nome: '4 · Experimentos' },
     { id: 'b5', nome: '5 · Análise' },
-    { id: 'fim', nome: 'Fim' },
-    { id: 'reserva', nome: 'Reservas' }
+    { id: 'fim', nome: 'Fim' }
   ];
   // Colunas do índice (grupos em cada coluna).
-  var COLUNAS = [['abertura', 'b1', 'b2'], ['b3', 'fim'], ['b4', 'b5'], ['reserva']];
+  var COLUNAS = [['abertura', 'b1', 'b2'], ['b3', 'b4'], ['b5', 'fim']];
 
   var palco = document.getElementById('palco');
   var telas = Array.prototype.slice.call(document.querySelectorAll('.tela'));
@@ -43,11 +42,8 @@
   var painelNotas = document.getElementById('notas');
   var indice = document.getElementById('indice');
 
-  // Sequência principal: tudo antes das reservas.
+  // Sequência principal: todas as telas (a última é a de perguntas).
   var ultimaPrincipal = telas.length - 1;
-  for (var k = 0; k < telas.length; k++) {
-    if (telas[k].dataset.grupo === 'reserva') { ultimaPrincipal = k - 1; break; }
-  }
   var totalPrincipal = telas.filter(function (t) { return /^\d+$/.test(t.dataset.num || ''); }).length + 2;
 
   var atual = -1, passoAtual = 1, escala = 1;

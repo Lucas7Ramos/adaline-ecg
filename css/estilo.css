@@ -440,8 +440,8 @@ sub { font-size: 0.7em; line-height: 0; vertical-align: -0.25em; }
 }
 .indice .colunas {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
   align-items: start;
 }
 .indice .grupo { margin-bottom: 16px; }
@@ -479,16 +479,6 @@ sub { font-size: 0.7em; line-height: 0; vertical-align: -0.25em; }
   font-weight: 500;
   min-width: 30px;
 }
-
-/* ---------- Tela provisória ---------- */
-
-.em-construcao {
-  position: absolute;
-  left: var(--margem);
-  top: 200px;
-  width: 640px;
-}
-.em-construcao p { margin: 8px 0 0; font-size: 22px; }
 
 /* ---------- Movimento reduzido ---------- */
 
