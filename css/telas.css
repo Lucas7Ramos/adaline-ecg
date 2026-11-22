@@ -345,6 +345,228 @@
 #t-widrow .baixo svg.seta { display: block; align-self: center; }
 
 /* =========================================================
+   Tela 5: O Adaline como neurônio
+   ========================================================= */
+
+#t-neuronio .neuronio {
+  position: absolute;
+  left: var(--margem);
+  top: 172px;
+  width: 500px;
+  height: 384px;
+  padding: 0;
+}
+#t-neuronio .neuronio svg { display: block; }
+#t-neuronio svg text { fill: var(--tinta); text-anchor: middle; }
+#t-neuronio .t-no,
+#t-neuronio .t-peso,
+#t-neuronio .t-var,
+#t-neuronio .t-sinal { font-family: var(--f-texto); font-weight: 700; }
+#t-neuronio .t-no { font-size: 28px; }
+#t-neuronio .t-peso { font-size: 26px; }
+#t-neuronio .t-var { font-size: 30px; }
+#t-neuronio .t-sinal { font-size: 30px; }
+#t-neuronio .t-sub { font-size: 18px; }
+#t-neuronio .t-rot { font-family: var(--f-mono); font-size: 20px; }
+#t-neuronio .t-soma {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 46px;
+  fill: var(--branco);
+}
+#t-neuronio .t-lms {
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: 20px;
+  fill: var(--branco);
+}
+/* Halo amarelo atrás da parte do neurônio que corresponde à linha acesa. */
+#t-neuronio .halo,
+#t-neuronio .halo-linha {
+  opacity: 0;
+  transition: opacity 250ms ease-out;
+}
+#t-neuronio .halo { fill: var(--amarelo); stroke: var(--tinta); stroke-width: 2.5; }
+#t-neuronio .halo-linha {
+  fill: none;
+  stroke: var(--amarelo);
+  stroke-width: 20;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#t-neuronio .parte.aceso .halo,
+#t-neuronio .parte.aceso .halo-linha { opacity: 1; }
+
+#t-neuronio .traducao {
+  position: absolute;
+  left: 584px;
+  top: 172px;
+  width: 640px;
+  height: 384px;
+  padding: 0;
+  overflow: hidden;
+}
+#t-neuronio .linha {
+  display: grid;
+  grid-template-columns: 212px 1fr;
+  height: 48px;
+  border-top: 2px solid var(--tinta);
+  transition: background-color 250ms ease-out;
+}
+/* Célula em bloco (não flex, para não comer os espaços em volta de <sub>);
+ * uma linha só, centrada pela altura da linha. */
+#t-neuronio .linha > span {
+  display: block;
+  padding: 0 16px;
+  line-height: 46px;
+  white-space: nowrap;
+}
+#t-neuronio .linha > span + span { border-left: 2px solid var(--tinta); }
+#t-neuronio .linha.cab {
+  height: 42px;
+  border-top: 0;
+  background: var(--tinta);
+  color: var(--branco);
+  font-family: var(--f-mono);
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+#t-neuronio .linha.cab > span { line-height: 42px; }
+#t-neuronio .linha.cab > span + span { border-left-color: var(--branco); }
+#t-neuronio .conceito { font-weight: 700; font-size: 22px; }
+#t-neuronio .valor { font-size: 22px; }
+#t-neuronio .valor sub { font-size: 17px; }
+#t-neuronio .linha.aceso { background: var(--amarelo); }
+
+#t-neuronio .destaque-final {
+  position: absolute;
+  left: var(--margem);
+  top: 580px;
+  width: 1168px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+}
+#t-neuronio .destaque-final .pilula { flex-shrink: 0; }
+#t-neuronio .destaque-final .frase { font-size: 30px; white-space: nowrap; }
+
+/* =========================================================
+   Tela 6: Por que seno e cosseno?
+   ========================================================= */
+
+#t-seno-cosseno .acoes {
+  position: absolute;
+  right: var(--margem);
+  top: 92px;
+  display: flex;
+  gap: 12px;
+}
+
+#t-seno-cosseno .ondas {
+  position: absolute;
+  left: var(--margem);
+  top: 172px;
+  width: 1168px;
+  height: 232px;
+  padding: 10px 19px 0;
+}
+#t-seno-cosseno .legenda {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 44px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#t-seno-cosseno .legenda .item { display: flex; align-items: center; gap: 12px; }
+#t-seno-cosseno .traco {
+  display: inline-block;
+  width: 40px;
+  border-radius: 999px;
+}
+#t-seno-cosseno .traco.laranja { height: 10px; background: var(--laranja); }
+#t-seno-cosseno .traco.azul { height: 5px; background: var(--azul); }
+#t-seno-cosseno .encaixou {
+  margin-left: auto;
+  background: var(--tinta);
+  color: var(--branco);
+  border-radius: 8px;
+  padding: 6px 14px;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+#t-seno-cosseno .encaixou.mostrar { opacity: 1; }
+#t-seno-cosseno .ondas svg { display: block; margin-top: 6px; }
+
+#t-seno-cosseno .peso,
+#t-seno-cosseno .medidor {
+  position: absolute;
+  top: 428px;
+  height: 228px;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#t-seno-cosseno .peso { width: 340px; }
+#seno-c1 { left: var(--margem); }
+#seno-c2 { left: 444px; }
+#t-seno-cosseno .operador {
+  position: absolute;
+  left: 396px;
+  top: 428px;
+  width: 48px;
+  height: 228px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 1;
+}
+#t-seno-cosseno .peso .cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#t-seno-cosseno .peso label { font-weight: 700; font-size: 26px; line-height: 1.1; }
+#t-seno-cosseno .peso .valor-amarelo { font-size: 28px; min-width: 92px; text-align: center; }
+#t-seno-cosseno .peso svg { display: block; }
+
+/* Slider de −0,5 a +0,5: o azul vai do zero (centro) até o botão. */
+#t-seno-cosseno .slider.bipolar { --a: 50%; --b: 50%; }
+#t-seno-cosseno .slider.bipolar::-webkit-slider-runnable-track {
+  background: linear-gradient(to right,
+    var(--cinza-linha) var(--a), var(--azul) var(--a),
+    var(--azul) var(--b), var(--cinza-linha) var(--b));
+}
+#t-seno-cosseno .slider.bipolar::-moz-range-progress { background: transparent; border-color: transparent; }
+
+#t-seno-cosseno .medidor { left: 812px; width: 412px; }
+#t-seno-cosseno .medidor .nome { font-weight: 700; font-size: 24px; line-height: 1.1; }
+#t-seno-cosseno .medidor .numero-grande { font-size: 72px; }
+#t-seno-cosseno .medidor .barra {
+  height: 24px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 999px;
+  background: var(--branco);
+  overflow: hidden;
+}
+#t-seno-cosseno .medidor .barra > div {
+  height: 100%;
+  width: 100%;
+  background: var(--laranja);
+  transition: width 200ms ease-out;
+}
+#t-seno-cosseno .medidor .sub { font-size: 20px; line-height: 1.2; }
+
+/* =========================================================
    Tela 13: Experimento 3
    ========================================================= */
 
