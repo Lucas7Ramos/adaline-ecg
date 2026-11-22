@@ -1,0 +1,313 @@
+/* Layout de cada tela (base 1280 × 720). Área útil: x 56–1224, y 40–680. */
+
+/* =========================================================
+   Tela 1: Capa
+   ========================================================= */
+
+#t-capa .sobretitulo {
+  position: absolute;
+  left: var(--margem);
+  top: 44px;
+}
+#t-capa .titulo {
+  top: 80px;
+  width: 760px;
+  font-size: 100px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+#t-capa .subtitulo {
+  position: absolute;
+  left: var(--margem);
+  top: 278px;
+  width: 700px;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+#t-capa .chaves {
+  position: absolute;
+  left: 828px;
+  top: 44px;
+  width: 396px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+#t-capa .chaves .cartao {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  column-gap: 12px;
+  padding: 10px 18px;
+  min-height: 92px;
+}
+#t-capa .chaves .num {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 72px;
+  line-height: 1;
+}
+#t-capa .chaves .num.azul { color: var(--azul); }
+#t-capa .chaves .num.laranja { color: var(--laranja); }
+#t-capa .chaves .txt { font-weight: 700; font-size: 21px; line-height: 1.2; }
+#t-capa .chaves .cartao.amarelo { background: var(--amarelo); }
+
+#t-capa .monitor {
+  position: absolute;
+  left: var(--margem);
+  top: 372px;
+  width: 1168px;
+  height: 200px;
+}
+#t-capa .monitor .faixa { transition: background-color 250ms ease-out, color 250ms ease-out; }
+#t-capa .monitor svg { display: block; }
+
+#t-capa .rodape {
+  position: absolute;
+  left: var(--margem);
+  top: 598px;
+  width: 1168px;
+  height: 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--branco);
+  overflow: hidden;
+}
+#t-capa .rodape > div { padding: 8px 18px; }
+#t-capa .rodape > div + div { border-left: var(--borda); }
+#t-capa .rodape .rotulo-mono { font-size: 16px; }
+#t-capa .rodape .valor { font-weight: 700; font-size: 24px; line-height: 1.3; }
+
+/* =========================================================
+   Tela 4: A ideia de Widrow
+   ========================================================= */
+
+#t-widrow .titulo { font-size: 60px; }
+
+#t-widrow .equacao {
+  position: absolute;
+  left: var(--margem);
+  top: 172px;
+  width: 1168px;
+  display: grid;
+  grid-template-columns: 1fr 64px 1fr 64px 1fr;
+  align-items: center;
+}
+#t-widrow .equacao .cartao svg { display: block; margin: 6px 0 0; }
+#t-widrow .equacao .legenda {
+  padding: 4px 16px 12px;
+  font-size: 20px;
+  line-height: 1.25;
+  min-height: 66px;
+}
+#t-widrow .operador {
+  text-align: center;
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 84px;
+  line-height: 1;
+}
+#t-widrow .cartao.erro {
+  outline: 3px solid var(--azul);
+  outline-offset: 4px;
+}
+
+#t-widrow .pergunta-y {
+  position: absolute;
+  left: var(--margem);
+  top: 436px;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+#t-widrow .ligacoes {
+  position: absolute;
+  left: 0;
+  top: 404px;
+  width: 1280px;
+  height: 58px;
+}
+#t-widrow .baixo {
+  position: absolute;
+  left: var(--margem);
+  top: 466px;
+  width: 1168px;
+  height: 190px;
+  display: grid;
+  grid-template-columns: 1fr 64px 1fr 64px 1fr;
+  align-items: stretch;
+}
+#t-widrow .baixo .cartao {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 18px;
+}
+#t-widrow .baixo .nome {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.05;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#t-widrow .baixo .formula {
+  font-family: var(--f-mono);
+  font-size: 22px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#t-widrow .baixo .formula .seta-txt { font-family: var(--f-texto); }
+#t-widrow .baixo .txt { font-size: 20px; line-height: 1.25; }
+#t-widrow .baixo svg.seta { display: block; align-self: center; }
+
+/* Pulsos em loop (só no último passo, com a tela ativa). */
+@keyframes pulso-x {
+  0% { transform: translateX(0); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(var(--dist)); opacity: 0; }
+}
+@keyframes pulso-y {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(var(--dist)); opacity: 0; }
+}
+#t-widrow.atual .visivel .pulso.x { animation: pulso-x 1.6s linear infinite; }
+#t-widrow.atual .visivel .pulso.y { animation: pulso-y 1.6s linear infinite; }
+#t-widrow .pulso.atraso { animation-delay: 0.8s !important; }
+
+/* =========================================================
+   Tela 13: Experimento 3
+   ========================================================= */
+
+#t-exp3 .controle {
+  position: absolute;
+  left: 528px;
+  top: 36px;
+  width: 696px;
+  height: 120px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 22px;
+  padding: 10px 20px;
+}
+#t-exp3 .controle label,
+#t-exp3 .controle .rot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#t-exp3 .controle .lado-ref {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+#t-exp3 .controle .lado-ref .rot { font-size: 20px; }
+
+#t-exp3 .placar {
+  position: absolute;
+  left: var(--margem);
+  top: 176px;
+  width: 1168px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+#t-exp3 .placar .cartao {
+  position: relative;
+  height: 224px;
+  padding: 14px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: background-color 250ms ease-out, box-shadow 250ms ease-out;
+}
+#t-exp3 .placar .nome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.05;
+}
+#t-exp3 .placar .sub { font-size: 20px; font-weight: 500; line-height: 1.2; }
+#t-exp3 .placar .numero-grande { font-size: 68px; margin-top: 2px; }
+#t-exp3 .placar .barra {
+  height: 20px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--branco);
+}
+#t-exp3 .placar .barra > div {
+  height: 100%;
+  width: 0;
+  transition: width 250ms ease-out;
+}
+#t-exp3 .placar .sobra {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  margin-top: auto;
+}
+#t-exp3 .placar .sobra svg { display: block; }
+#t-exp3 .placar .etiqueta-melhor {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+#t-exp3 .placar .vencedor .etiqueta-melhor { opacity: 1; }
+
+#t-exp3 .grafico-card {
+  position: absolute;
+  left: var(--margem);
+  top: 424px;
+  width: 768px;
+  height: 256px;
+  padding: 12px 20px;
+}
+#t-exp3 .grafico-card .cab {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.1;
+}
+#t-exp3 .grafico-card .area { position: relative; margin-top: 4px; }
+#t-exp3 .grafico-card svg { display: block; overflow: visible; }
+#t-exp3 .grafico-card .anotacao {
+  position: absolute;
+  top: 0;
+  transition: left 250ms ease-out, opacity 200ms ease-out;
+}
+#t-exp3 .movel { transition: transform 250ms ease-out; }
+#t-exp3 .rotulo-linha { transition: transform 250ms ease-out, opacity 200ms ease-out; }
+
+#t-exp3 .resposta {
+  position: absolute;
+  left: 848px;
+  top: 424px;
+  width: 376px;
+  height: 256px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+#t-exp3 .resposta .pilula { align-self: flex-start; }

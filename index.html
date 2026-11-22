@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaline como filtro adaptativo para ECG</title>
+<link rel="stylesheet" href="css/fontes.css">
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/telas.css">
+</head>
+<body>
+
+<!--
+  Cada <section class="tela"> é uma tela de 1280 × 720.
+    data-id        endereço da tela (#widrow, #exp3/2 abre no passo 2)
+    data-num       número mostrado no canto ("" = não mostra)
+    data-bloco     1 a 5 (mostra o indicador de bloco); vazio = sem indicador
+    data-grupo     grupo no índice: abertura, b1..b5, fim, reserva
+    data-etiqueta  texto da pílula do indicador (padrão: nome do bloco)
+    data-passos    quantos passos a seta revela (o passo 1 já aparece ao chegar)
+  Elementos com data-passo="n" aparecem no passo n.
+  <div class="notas"> é o texto "Dizer" do roteiro (tecla N).
+  {{exp1.snr_antes_db}} etc. nas notas vêm de data/resultados.js.
+-->
+
+<main id="palco" aria-live="polite">
+  <div class="faixa-topo"></div>
+
+  <!-- ===================== 1. Capa ===================== -->
+  <section class="tela" id="t-capa" data-id="capa" data-num="" data-grupo="abertura"
+           data-titulo="Capa" data-passos="2">
+    <div class="sobretitulo rotulo-mono">Seminário · Redes Neurais Artificiais</div>
+    <h1 class="titulo"><span class="chave">Adaline</span> como filtro adaptativo para ECG</h1>
+    <p class="subtitulo">Um neurônio que aprende o ruído da rede elétrica e devolve o batimento limpo.</p>
+
+    <div class="chaves">
+      <div class="cartao"><span class="num azul">1</span><span class="txt">neurônio linear</span></div>
+      <div class="cartao"><span class="num laranja">2</span><span class="txt">pesos ajustáveis: w<sub>1</sub> e w<sub>2</sub></span></div>
+      <div class="cartao amarelo"><span class="num">0</span><span class="txt">fase de treino separada: aprende enquanto filtra</span></div>
+    </div>
+
+    <div class="monitor cartao com-faixa">
+      <div class="faixa laranja" id="capa-estado">ECG + ruído de 60 Hz</div>
+      <svg id="capa-monitor" width="1162" height="148" viewBox="0 0 1162 148" aria-label="ECG correndo como num monitor"></svg>
+    </div>
+
+    <div class="rodape">
+      <div><div class="rotulo-mono">Disciplina</div><div class="valor" id="capa-disciplina">[NOME DA DISCIPLINA]</div></div>
+      <div><div class="rotulo-mono">Apresentação</div><div class="valor">Lucas Cavalcanti e Josué Costa</div></div>
+    </div>
+
+    <div class="notas">
+      <p>O título, os nomes do grupo e a frase-gancho: <b>“vamos ensinar um neurônio a ouvir o coração no meio do barulho da rede elétrica”</b>.</p>
+      <p class="deixa">→ o Adaline liga: o ruído se apaga e o ECG limpo continua correndo. É uma prévia do resultado do trabalho inteiro.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 2. O que é um ECG ===================== -->
+  <section class="tela" id="t-ecg" data-id="ecg" data-num="2" data-bloco="1" data-grupo="b1"
+           data-titulo="O que é um ECG" data-passos="1">
+    <h1 class="titulo">O que é um <span class="chave">ECG</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Batimento real com P, QRS e T aparecendo a cada seta.</p></div>
+    <div class="notas">
+      <ul>
+        <li>O ECG registra a atividade elétrica do coração, com amplitude de poucos milivolts.</li>
+        <li>Cada batimento tem partes com nome (onda P, complexo QRS, onda T), e o médico usa a forma delas para diagnosticar arritmias e outros problemas.</li>
+        <li>Detalhes pequenos importam: a onda P tem uma fração da altura do QRS.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 3. Interferência de 60 Hz ===================== -->
+  <section class="tela" id="t-ruido" data-id="ruido" data-num="3" data-bloco="1" data-grupo="b1"
+           data-titulo="A interferência de 60 Hz" data-passos="1">
+    <h1 class="titulo">O problema: <span class="chave">60 Hz</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>ECG + senoide de 60 Hz, botão com/sem ruído e lupa na onda P.</p></div>
+    <div class="notas">
+      <ul>
+        <li>Os cabos do eletrocardiógrafo e o corpo do paciente funcionam como antena e captam a rede elétrica, que no Brasil é de 60 Hz.</li>
+        <li>O ruído pode ter amplitude parecida com a do próprio ECG e esconde justamente os detalhes pequenos.</li>
+        <li>A rede não é perfeita: a frequência oscila um pouco e a intensidade muda quando alguém liga um aparelho perto. Isso vai importar no fim.</li>
+        <li>Pergunta que guia o resto: <b>“e se, em vez de cortar uma faixa fixa, o filtro aprendesse o ruído?”</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 4. A ideia de Widrow ===================== -->
+  <section class="tela" id="t-widrow" data-id="widrow" data-num="4" data-bloco="2" data-grupo="b2"
+           data-titulo="A ideia de Widrow" data-passos="4">
+    <h1 class="titulo">A ideia de Widrow: <span class="chave">o erro é o ECG limpo</span></h1>
+
+    <div class="equacao">
+      <div class="cartao com-faixa">
+        <div class="faixa laranja">d(n) · entrada primária</div>
+        <svg id="widrow-d" width="340" height="128" viewBox="0 0 340 128" aria-label="ECG com ruído"></svg>
+        <div class="legenda">ECG + ruído, do jeito que chega dos eletrodos</div>
+      </div>
+      <div class="operador" data-passo="2">−</div>
+      <div class="cartao com-faixa" data-passo="2">
+        <div class="faixa amarelo">y(n) · saída do Adaline</div>
+        <svg id="widrow-y" width="340" height="128" viewBox="0 0 340 128" aria-label="Cópia do ruído"></svg>
+        <div class="legenda">Uma cópia do ruído, montada a partir da referência</div>
+      </div>
+      <div class="operador" data-passo="3">=</div>
+      <div class="cartao com-faixa erro" data-passo="3">
+        <div class="faixa azul">e(n) · erro = ECG limpo</div>
+        <svg id="widrow-e" width="340" height="128" viewBox="0 0 340 128" aria-label="ECG limpo"></svg>
+        <div class="legenda">O que sobra é o ECG limpo: o erro já é o resultado</div>
+      </div>
+    </div>
+
+    <div class="pergunta-y rotulo-mono" data-passo="4">De onde vem y(n)?</div>
+
+    <!-- Setas verticais entre as linhas: Adaline → y(n) e e(n) → LMS -->
+    <svg class="ligacoes" data-passo="4" width="1280" height="58" viewBox="0 0 1280 58" aria-hidden="true">
+      <g>
+        <path d="M640 50 L640 10 M628 22 L640 8 L652 22" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="pulso y" cx="640" cy="48" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:-36px"/>
+      </g>
+      <g>
+        <path d="M1049 8 L1049 48 M1037 36 L1049 50 L1061 36" fill="none" stroke="#2b59ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="pulso y atraso" cx="1049" cy="10" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:36px"/>
+      </g>
+    </svg>
+
+    <div class="baixo" data-passo="4">
+      <div class="cartao">
+        <span class="nome">x(n) · referência</span>
+        <svg id="widrow-x" width="300" height="44" viewBox="0 0 300 44" aria-label="Senoide de referência"></svg>
+        <span class="txt">cos e sen de 60 Hz, da tomada: só ruído, nada do coração</span>
+      </div>
+      <svg class="seta" width="64" height="60" viewBox="0 0 64 60" aria-hidden="true">
+        <path d="M8 30 L52 30 M40 18 L54 30 L40 42" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="pulso x" cx="10" cy="30" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:36px"/>
+      </svg>
+      <div class="cartao destaque">
+        <span class="nome">Adaline</span>
+        <span class="formula">y = w<sub>1</sub>·cos + w<sub>2</sub>·sen</span>
+        <span class="txt">Combina as duas entradas com dois pesos</span>
+      </div>
+      <svg class="seta" width="64" height="60" viewBox="0 0 64 60" aria-hidden="true">
+        <path d="M56 30 L12 30 M24 18 L10 30 L24 42" fill="none" stroke="#2b59ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="pulso x atraso" cx="54" cy="30" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:-36px"/>
+      </svg>
+      <div class="cartao">
+        <span class="nome"><span class="bolinha azul"></span>Regra LMS</span>
+        <span class="formula">w <span class="seta-txt">←</span> w + 2·µ·e·x</span>
+        <span class="txt">A cada amostra, o erro volta e corrige w<sub>1</sub> e w<sub>2</sub></span>
+      </div>
+    </div>
+
+    <div class="notas">
+      <ul>
+        <li>Bernard Widrow criou o Adaline em 1960 e, em 1975, mostrou que ele resolve exatamente este problema (cancelamento adaptativo de ruído).</li>
+        <li>São duas entradas: a primária (ECG + ruído) e a referência (um sinal tirado da tomada, que tem o 60 Hz e nada do coração).</li>
+        <li>O Adaline transforma a referência numa cópia do ruído, e essa cópia é subtraída da entrada primária.</li>
+        <li>O ponto principal: o que sobra da subtração, o erro, é o ECG limpo. Como a referência não tem nada do coração, o Adaline não consegue cancelar o ECG, só o ruído.</li>
+      </ul>
+      <p class="deixa">Passos: d(n) → y(n) → e(n) → linha de baixo (x → Adaline ← LMS).</p>
+    </div>
+  </section>
+
+  <!-- ===================== 5. O Adaline como neurônio ===================== -->
+  <section class="tela" id="t-neuronio" data-id="neuronio" data-num="5" data-bloco="2" data-grupo="b2"
+           data-titulo="O Adaline como neurônio" data-passos="1">
+    <h1 class="titulo">O Adaline como <span class="chave">neurônio</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Desenho do neurônio e tabela de tradução que acende linha a linha.</p></div>
+    <div class="notas">
+      <p>A tradução do problema para o vocabulário de redes neurais: entradas (cos e sen de 60 Hz), pesos w<sub>1</sub> e w<sub>2</sub> começando em zero, saída y sem função de ativação, valor desejado d = ECG + ruído, erro e = d − y (o ECG limpo), custo e², aprendizado online amostra a amostra.</p>
+      <p>Fechar com: <b>“num classificador, o erro é algo a zerar; aqui, o erro é o resultado”</b>.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 6. Por que seno e cosseno? ===================== -->
+  <section class="tela" id="t-seno-cosseno" data-id="seno-cosseno" data-num="6" data-bloco="2" data-grupo="b2"
+           data-titulo="Por que seno e cosseno?" data-passos="1">
+    <h1 class="titulo">Por que <span class="chave">seno e cosseno</span>?</h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Sliders w<sub>1</sub> e w<sub>2</sub> e o botão “deixar o Adaline fazer”.</p></div>
+    <div class="notas">
+      <p>Somando um cosseno e um seno com pesos diferentes, dá para montar uma senoide de 60 Hz com qualquer amplitude e qualquer fase. Os dois pesos são os dois “botões” que o Adaline gira até a cópia encaixar no ruído real.</p>
+      <p class="deixa">Com o tempo curto, mexer pouco nos sliders e usar logo o botão.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 7. Adaline × Perceptron ===================== -->
+  <section class="tela" id="t-perceptron" data-id="perceptron" data-num="7" data-bloco="3" data-grupo="b3"
+           data-titulo="Adaline × Perceptron" data-passos="1">
+    <h1 class="titulo"><span class="chave">Adaline</span> × Perceptron</h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Os dois neurônios lado a lado, com o ponto onde o erro é medido.</p></div>
+    <div class="notas">
+      <p>Os dois são um neurônio linear. O Perceptron mede o erro depois da função degrau: só sabe se acertou ou errou. O Adaline mede o erro antes, na saída linear: sabe quanto errou, e por isso pode usar gradiente descendente. Aqui não há classificação: o Adaline faz estimação contínua.</p>
+      <p class="deixa">Versão curta: “o Perceptron sabe se errou, o Adaline sabe quanto errou”.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 8. A regra LMS ===================== -->
+  <section class="tela" id="t-lms" data-id="lms" data-num="8" data-bloco="3" data-grupo="b3"
+           data-titulo="A regra LMS" data-passos="1">
+    <h1 class="titulo">A regra <span class="chave">LMS</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>A “tigela” do erro com o caminho dos pesos e o slider de µ.</p></div>
+    <div class="notas">
+      <ul>
+        <li>O objetivo é diminuir e². A regra LMS dá um passo na direção que mais reduz o erro: w ← w + 2·µ·e·x.</li>
+        <li>µ é a taxa de aprendizado, o tamanho do passo.</li>
+        <li>É a regra delta (Widrow-Hoff) aplicada a uma amostra por vez: o filtro aprende enquanto filtra.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 9. O algoritmo passo a passo ===================== -->
+  <section class="tela" id="t-algoritmo" data-id="algoritmo" data-num="9" data-bloco="3" data-grupo="b3"
+           data-titulo="O algoritmo passo a passo" data-passos="1">
+    <h1 class="titulo">O algoritmo <span class="chave">passo a passo</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>O loop do Adaline com a linha atual destacada e os valores da amostra.</p></div>
+    <div class="notas">
+      <p>O que o Adaline faz em cada amostra, nas 4 linhas do loop.</p>
+      <p class="deixa">Mostrar uma ou duas amostras com “próxima amostra” e depois “acelerar”.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 10. Agora no Colab ===================== -->
+  <section class="tela" id="t-colab" data-id="colab" data-num="10" data-bloco="3" data-grupo="b3"
+           data-titulo="Agora no Colab" data-passos="1">
+    <h1 class="titulo">Agora no <span class="chave">Colab</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Botão “Ver no Colab” e o nome do notebook adaline_ecg.ipynb.</p></div>
+    <div class="notas">
+      <p><b>“Esse mesmo código, em Python, rodando sobre um ECG real.”</b></p>
+      <p class="deixa">Clicar em “Ver no Colab”, mostrar a célula do Adaline, rodar a célula do experimento 1, mostrar o SNR antes e depois e o primeiro gráfico. Voltar para a aba do site.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 11. Experimento 1 ===================== -->
+  <section class="tela" id="t-exp1" data-id="exp1" data-num="11" data-bloco="4" data-grupo="b4"
+           data-etiqueta="Experimento 1 de 3" data-titulo="Exp. 1: o Adaline funciona?" data-passos="1">
+    <h1 class="titulo">O Adaline <span class="chave">funciona</span>?</h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Monitor com o botão “ligar o Adaline”, pesos, espectro e SNR.</p></div>
+    <div class="notas">
+      <p>Com ruído fixo de 60 Hz (µ = {{exp1.mu|n}}), o Adaline aprende o ruído em cerca de <b>{{exp1.tempo}} s</b>, e o SNR sobe de cerca de <b>{{exp1.antes}} dB</b> para cerca de <b>{{exp1.depois}} dB</b>: um ganho de cerca de {{exp1.ganho|0}} dB.</p>
+      <p class="deixa">Resposta: “sim, e o que sobra no erro é o ECG”.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 12. Experimento 2 ===================== -->
+  <section class="tela" id="t-exp2" data-id="exp2" data-num="12" data-bloco="4" data-grupo="b4"
+           data-etiqueta="Experimento 2 de 3" data-titulo="Exp. 2: o papel de µ" data-passos="1">
+    <h1 class="titulo">Qual o papel de <span class="chave">µ</span>?</h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Slider de µ, barras de velocidade e precisão e a “tesoura”.</p></div>
+    <div class="notas">
+      <ul>
+        <li>µ grande aprende quase na hora, mas fica “nervoso”: o ECG o empurra a cada batimento e o resultado sai tremido.</li>
+        <li>µ pequeno deixa o ECG muito limpo, mas demora segundos para aprender.</li>
+        <li>Não existe µ perfeito: é um compromisso entre velocidade e precisão.</li>
+        <li>No Colab (µ de {{exp2.muMin|n}} a {{exp2.muMax|n}}): com µ = {{exp2.muMin|n}}, leva cerca de <b>{{exp2.tempoMuMin}} s</b> para aprender e chega a <b>{{exp2.snrMuMin}} dB</b>. O mais rápido é µ = {{exp2.muRapido|n}}: aprende em <b>{{exp2.tempoRapido|2}} s</b>, mas termina com <b>{{exp2.snrRapido}} dB</b>.</li>
+        <li>No maior µ testado ({{exp2.muMax|n}}), o tempo volta a subir ({{exp2.tempoMuMax|2}} s) e o SNR cai para {{exp2.snrMuMax}} dB. Se perguntarem, é a reserva R3.</li>
+      </ul>
+      <p class="deixa">Resposta: “µ maior aprende mais rápido e erra mais depois de aprender”.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 13. Experimento 3 ===================== -->
+  <section class="tela" id="t-exp3" data-id="exp3" data-num="13" data-bloco="4" data-grupo="b4"
+           data-etiqueta="Experimento 3 de 3" data-titulo="Exp. 3: por que adaptativo?" data-passos="4">
+    <h1 class="titulo">Por que <span class="chave">adaptativo</span>?</h1>
+
+    <div class="controle cartao">
+      <div>
+        <label for="exp3-desvio">Desvio da rede <span class="valor-amarelo" id="exp3-desvio-txt">0 Hz</span></label>
+        <input id="exp3-desvio" class="slider" type="range" min="0" max="5" step="1" value="0"
+               aria-label="Desvio da frequência da rede elétrica">
+      </div>
+      <div class="lado-ref" data-passo="3">
+        <span class="rot">referência do Adaline</span>
+        <div class="segmentado" role="group" aria-label="Referência do Adaline">
+          <button type="button" class="btn" id="exp3-acompanha" aria-pressed="true">acompanha</button>
+          <button type="button" class="btn" id="exp3-fixa" aria-pressed="false">fixa em 60 Hz</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="placar">
+      <div class="cartao" id="exp3-c0">
+        <div class="nome"><span class="bolinha azul"></span>Adaline</div>
+        <div class="sub" data-sub>referência acompanha a rede</div>
+        <div class="numero-grande"><span data-snr>0,0</span><span class="unidade"> dB</span></div>
+        <div class="barra"><div style="background:#2b59ff"></div></div>
+        <div class="sobra"><span>sobra</span><svg width="270" height="34" viewBox="0 0 270 34" aria-hidden="true"></svg></div>
+        <span class="etiqueta-melhor">MELHOR</span>
+      </div>
+      <div class="cartao" id="exp3-c1">
+        <div class="nome"><span class="bolinha laranja"></span>Notch estreito</div>
+        <div class="sub" data-sub>filtro fixo, Q = 30</div>
+        <div class="numero-grande"><span data-snr>0,0</span><span class="unidade"> dB</span></div>
+        <div class="barra"><div style="background:#ff6b3d"></div></div>
+        <div class="sobra"><span>sobra</span><svg width="270" height="34" viewBox="0 0 270 34" aria-hidden="true"></svg></div>
+        <span class="etiqueta-melhor">MELHOR</span>
+      </div>
+      <div class="cartao" id="exp3-c2">
+        <div class="nome"><span class="bolinha tinta"></span>Melhor notch</div>
+        <div class="sub" data-sub>o melhor Q possível: 20</div>
+        <div class="numero-grande"><span data-snr>0,0</span><span class="unidade"> dB</span></div>
+        <div class="barra"><div style="background:#111111"></div></div>
+        <div class="sobra"><span>sobra</span><svg width="270" height="34" viewBox="0 0 270 34" aria-hidden="true"></svg></div>
+        <span class="etiqueta-melhor">MELHOR</span>
+      </div>
+    </div>
+
+    <div class="grafico-card cartao" data-passo="2">
+      <div class="cab">SNR (dB) conforme a rede varia</div>
+      <div class="area">
+        <svg id="exp3-grafico" class="grafico" width="722" height="196" viewBox="0 0 722 196" aria-label="SNR em função do desvio da rede"></svg>
+        <div class="anotacao" id="exp3-virada">← a partir daqui o Adaline vence</div>
+      </div>
+    </div>
+
+    <div class="resposta em-uma-frase" data-passo="4">
+      <span class="pilula">em uma frase</span>
+      <span class="frase">Adaptativo vale quando o ruído muda; com a rede estável, um filtro fixo basta.</span>
+    </div>
+
+    <div class="notas">
+      <ul>
+        <li>O filtro comum para este problema é o notch fixo, que corta uma faixa estreita em volta de 60 Hz.</li>
+        <li>Com a rede estável, um notch bem ajustado é até melhor que o Adaline.</li>
+        <li>Quando a frequência da rede oscila, a frequência sai do “buraco” do notch estreito e o ruído escapa. Alargar o buraco segura o ruído, mas começa a deformar o ECG.</li>
+        <li>O Adaline acompanha a variação, desde que a referência acompanhe a rede (o sensor na tomada).</li>
+      </ul>
+      <p>Em 0 Hz, o melhor notch (Q = {{exp3.qEstavel|n}}) vence por pouco: {{exp3.notchEstavel}} × {{exp3.adalineEstavel}} dB. A partir de {{exp3.virada|n}} Hz de desvio, o Adaline vence.</p>
+      <p class="deixa">Passo 1: começar em 0 Hz (o melhor notch vence) e subir o slider. Passo 2: gráfico SNR × desvio. Passo 3: trocar a referência para “fixa em 60 Hz”: o Adaline perde a vantagem. Passo 4: a resposta.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 14. Análise ===================== -->
+  <section class="tela" id="t-analise" data-id="analise" data-num="14" data-bloco="5" data-grupo="b5"
+           data-titulo="Análise" data-passos="1">
+    <h1 class="titulo">O que os experimentos <span class="chave">mostram</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Três colunas com número, frase e miniatura, e a conclusão geral.</p></div>
+    <div class="notas">
+      <p>Uma conclusão por experimento, cada uma com o número que a sustenta, dito em voz alta (números do Colab):</p>
+      <ul>
+        <li><b>1 · Funciona:</b> o SNR vai de {{exp1.antes}} para {{exp1.depois}} dB, um ganho de <b>+{{exp1.ganho}} dB</b>. O erro é o ECG limpo.</li>
+        <li><b>2 · Papel de µ:</b> o aprendizado mais rápido leva <b>{{exp2.tempoRapido|2}} s</b> (µ = {{exp2.muRapido|n}}), mas o ECG final fica {{exp2.perdaRapido}} dB pior que com µ = {{exp2.muMin|n}}. É um compromisso entre velocidade e precisão.</li>
+        <li><b>3 · Por que adaptativo:</b> com a rede estável, o notch basta; a partir de <b>{{exp3.virada|n}} Hz</b> de desvio, o Adaline vence. Em {{exp3.desvioMax|n}} Hz: Adaline {{exp3.adalineFim}} dB × melhor notch {{exp3.melhorFim}} dB.</li>
+      </ul>
+      <p>Fechar com a conclusão geral:</p>
+      <p><b>“Um único neurônio linear, aprendendo amostra a amostra, remove o ruído de 60 Hz e se adapta quando a rede varia, desde que tenha uma boa referência.”</b></p>
+    </div>
+  </section>
+
+  <!-- ===================== 15. Limitações e extensões ===================== -->
+  <section class="tela" id="t-limitacoes" data-id="limitacoes" data-num="15" data-bloco="5" data-grupo="b5"
+           data-titulo="Limitações e extensões" data-passos="1">
+    <h1 class="titulo">Limitações e <span class="chave">extensões</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Quadro de limitação, extensões com o mini-diagrama e as três aplicações.</p></div>
+    <div class="notas">
+      <ul>
+        <li>A vantagem do Adaline depende de uma referência que acompanhe o ruído.</li>
+        <li>O ruído deste trabalho foi simulado, e os desvios de 0,3 a 0,5 Hz são exagerados de propósito: na prática a rede fica perto de ±0,1 Hz.</li>
+        <li>Extensões naturais: harmônicos de 120 e 180 Hz (um par seno/cosseno a mais por frequência), oscilação da linha de base pela respiração, e a variante NLMS.</li>
+        <li>Fechar: o mesmo princípio de “aprender o ruído e subtrair” está em fones com cancelamento de ruído, no cancelamento de eco e na separação do ECG do bebê do ECG da mãe.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 16. Perguntas ===================== -->
+  <section class="tela" id="t-perguntas" data-id="perguntas" data-num="" data-grupo="fim"
+           data-titulo="Perguntas" data-passos="1">
+    <h1 class="titulo" style="top:60px">Obrigado</h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>ECG limpo correndo, “Obrigado” e os nomes do grupo.</p></div>
+    <div class="notas"><p>Perguntas. As telas de reserva (R1 a R4) estão no índice (tecla M).</p></div>
+  </section>
+
+  <!-- ===================== Reservas ===================== -->
+  <section class="tela" id="t-degrau" data-id="degrau" data-num="R1" data-grupo="reserva"
+           data-titulo="Degrau de amplitude" data-passos="1">
+    <h1 class="titulo" style="top:60px">E se o ruído <span class="chave">mudar de repente</span>?</h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>O ruído dobra no meio do sinal e o Adaline reaprende.</p></div>
+    <div class="notas"><p>O ruído dobra de repente no meio do sinal (como um aparelho sendo ligado) e o Adaline reaprende.</p></div>
+  </section>
+
+  <section class="tela" id="t-numeros" data-id="numeros" data-num="R2" data-grupo="reserva"
+           data-titulo="Números do Colab" data-passos="1">
+    <h1 class="titulo" style="top:60px">Números do <span class="chave">Colab</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Os valores completos dos experimentos 2 e 3.</p></div>
+    <div class="notas"><p>Os valores completos dos experimentos 2 e 3, para perguntas sobre resultados específicos.</p></div>
+  </section>
+
+  <section class="tela" id="t-mu-teoria" data-id="mu-teoria" data-num="R3" data-grupo="reserva"
+           data-titulo="µ grande × teoria" data-passos="1">
+    <h1 class="titulo" style="top:60px">Por que µ grande não segue a <span class="chave">teoria</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Tempo de convergência medido × previsto.</p></div>
+    <div class="notas"><p>Tempo de convergência medido × previsto.</p></div>
+  </section>
+
+  <section class="tela" id="t-aplicacoes" data-id="aplicacoes" data-num="R4" data-grupo="reserva"
+           data-titulo="Onde mais isso aparece" data-passos="1">
+    <h1 class="titulo" style="top:60px">Onde mais isso <span class="chave">aparece</span></h1>
+    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Fones com cancelamento de ruído, cancelamento de eco e ECG fetal.</p></div>
+    <div class="notas"><p>Fones com cancelamento de ruído, cancelamento de eco e ECG fetal, cada um com o mini-diagrama “primária − referência adaptada = sinal limpo”.</p></div>
+  </section>
+
+  <!-- ===================== Elementos fixos ===================== -->
+  <div class="indicador" id="indicador" hidden>
+    <span class="rotulo" id="indicador-rotulo"></span>
+    <span class="pontos" id="indicador-pontos" aria-hidden="true"></span>
+  </div>
+  <div class="numero-tela" id="numero-tela" hidden></div>
+  <div class="notas-painel" id="notas" hidden></div>
+  <div class="indice" id="indice" hidden></div>
+</main>
+
+<!-- Dados do Colab (variáveis globais; sem fetch, para funcionar via file://) -->
+<script src="data/ecg100.js"></script>
+<script src="data/resultados.js"></script>
+<script src="js/config.js"></script>
+<script src="js/adaline.js"></script>
+<script src="js/sinais.js"></script>
+<script src="js/experimentos.js"></script>
+<script src="js/telas/capa.js"></script>
+<script src="js/telas/widrow.js"></script>
+<script src="js/telas/exp3.js"></script>
+<script src="js/navegacao.js"></script>
+</body>
+</html>
