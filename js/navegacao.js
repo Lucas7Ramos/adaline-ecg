@@ -268,8 +268,14 @@
   /* Depois de usar um controle com o mouse, tira o foco dele,
    * para as setas e o espaço voltarem a navegar. */
   document.addEventListener('pointerup', function (ev) {
-    var c = ev.target.closest && ev.target.closest('button, input');
+    var c = ev.target.closest && ev.target.closest('button, input, a');
     if (c) setTimeout(function () { c.blur(); }, 0);
+  });
+  // Ao voltar de outra aba (ex.: o Colab), solta o foco de um link,
+  // senão o Enter abriria o link de novo em vez de ser ignorado.
+  window.addEventListener('focus', function () {
+    var f = document.activeElement;
+    if (f && f.tagName === 'A') f.blur();
   });
   document.addEventListener('change', function (ev) {
     if (ev.target.type === 'range') ev.target.blur();

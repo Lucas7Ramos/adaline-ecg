@@ -962,6 +962,16 @@
 }
 #t-colab .abrir.sem-link { cursor: default; }
 #t-colab .caderno .obs { font-size: 22px; line-height: 1.25; }
+#t-colab .caderno .endereco {
+  margin-top: 8px;
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--tinta);
+}
+#t-colab .caderno .endereco span { display: block; }
+#t-colab .caderno .endereco[hidden] { display: none; }
 
 #t-colab .lista {
   position: absolute;
