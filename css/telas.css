@@ -83,6 +83,184 @@
 #t-capa .rodape .valor { font-weight: 700; font-size: 24px; line-height: 1.3; }
 
 /* =========================================================
+   Telas 2 e 3: rótulo de onda (pílula preta sobre o gráfico)
+   ========================================================= */
+
+.rotulo-onda {
+  position: absolute;
+  top: 6px;
+  translate: -50% 0;   /* separado do transform dos passos */
+  background: var(--tinta);
+  color: var(--branco);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Tela 2: O que é um ECG
+   ========================================================= */
+
+#t-ecg .batimento {
+  position: absolute;
+  left: var(--margem);
+  top: 172px;
+  width: 720px;
+  height: 480px;
+  padding: 14px 21px;
+}
+#t-ecg .cab {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+#t-ecg .cab .nome,
+#t-ecg .ritmo .nome {
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.1;
+}
+#t-ecg .cab .fonte { font-family: var(--f-mono); font-size: 20px; }
+#t-ecg .batimento .area { position: relative; margin-top: 6px; }
+#t-ecg .batimento svg { display: block; }
+#t-ecg .batimento svg text {
+  font-family: var(--f-mono);
+  font-size: 20px;
+  fill: var(--tinta);
+}
+#t-ecg .faixa-onda { transition: fill 250ms ease-out, opacity 250ms ease-out; }
+
+#t-ecg .ritmo {
+  position: absolute;
+  left: 808px;
+  top: 172px;
+  width: 416px;
+  height: 252px;
+  padding: 14px 19px;
+}
+#t-ecg .ritmo svg { display: block; margin: 8px 0 6px; }
+#t-ecg .ritmo .fc {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+#t-ecg .ritmo .numero-grande { font-size: 64px; white-space: nowrap; }
+#t-ecg .ritmo .fc .txt { font-size: 20px; line-height: 1.2; }
+
+#t-ecg .proporcao {
+  position: absolute;
+  left: 808px;
+  top: 452px;
+  width: 416px;
+  height: 200px;
+  padding: 16px 19px;
+}
+#t-ecg .proporcao .frase { font-weight: 700; font-size: 24px; line-height: 1.2; }
+#t-ecg .proporcao .frase b {
+  background: var(--amarelo);
+  border: 2.5px solid var(--tinta);
+  border-radius: 6px;
+  padding: 0 6px;
+}
+#t-ecg .proporcao .barras {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px 12px;
+  margin-top: 18px;
+}
+#t-ecg .proporcao .rot { font-weight: 700; font-size: 20px; }
+#t-ecg .proporcao .val { font-family: var(--f-mono); font-size: 20px; }
+#t-ecg .proporcao .barra {
+  height: 26px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 6px;
+  background: var(--branco);
+  overflow: hidden;
+}
+#t-ecg .proporcao .cheio { height: 100%; width: 0; background: var(--tinta); }
+
+/* =========================================================
+   Tela 3: O problema, a interferência de 60 Hz
+   ========================================================= */
+
+#t-ruido .alterna {
+  position: absolute;
+  right: var(--margem);
+  top: 92px;
+}
+
+#t-ruido .principal {
+  position: absolute;
+  left: var(--margem);
+  top: 172px;
+  width: 1168px;
+  height: 212px;
+  padding: 0;
+}
+#t-ruido .principal svg { position: absolute; left: 236px; top: 13px; }
+#t-ruido .etiqueta {
+  position: absolute;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#t-ruido .e-ecg { top: 55px; }
+#t-ruido .e-ruido { top: 143px; }
+#t-ruido .e-junto { top: 113px; font-size: 24px; opacity: 0; }
+#t-ruido .mais {
+  position: absolute;
+  left: 20px;
+  top: 88px;
+  font-family: var(--f-titulo);
+  font-weight: 800;
+  font-size: 48px;
+  line-height: 1;
+}
+
+#t-ruido .lupa-ligacao {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: none;  /* só o fade: o aro tem de ficar sobre a onda P */
+  pointer-events: none;
+}
+
+#t-ruido .zoom {
+  position: absolute;
+  left: var(--margem);
+  top: 412px;
+  width: 620px;
+  height: 240px;
+}
+#t-ruido .zoom .faixa { transition: background-color 250ms ease-out; }
+#t-ruido .zoom .faixa.branca { background: var(--branco); }
+#t-ruido .zoom svg { display: block; margin: 10px 0 0 18px; }
+
+#t-ruido .pergunta {
+  position: absolute;
+  left: 708px;
+  top: 412px;
+  width: 516px;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+}
+#t-ruido .pergunta .frase { font-size: 32px; }
+
+/* =========================================================
    Tela 4: A ideia de Widrow
    ========================================================= */
 
@@ -165,23 +343,6 @@
 #t-widrow .baixo .formula .seta-txt { font-family: var(--f-texto); }
 #t-widrow .baixo .txt { font-size: 20px; line-height: 1.25; }
 #t-widrow .baixo svg.seta { display: block; align-self: center; }
-
-/* Pulsos em loop (só no último passo, com a tela ativa). */
-@keyframes pulso-x {
-  0% { transform: translateX(0); opacity: 0; }
-  15% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { transform: translateX(var(--dist)); opacity: 0; }
-}
-@keyframes pulso-y {
-  0% { transform: translateY(0); opacity: 0; }
-  15% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { transform: translateY(var(--dist)); opacity: 0; }
-}
-#t-widrow.atual .visivel .pulso.x { animation: pulso-x 1.6s linear infinite; }
-#t-widrow.atual .visivel .pulso.y { animation: pulso-y 1.6s linear infinite; }
-#t-widrow .pulso.atraso { animation-delay: 0.8s !important; }
 
 /* =========================================================
    Tela 13: Experimento 3

@@ -49,6 +49,6 @@
         fill: 'none', stroke: '#2b59ff', 'stroke-width': 3, 'stroke-linejoin': 'round'
       }, sx);
     }
-    // Sem estado para reiniciar: os pulsos rodam em CSS no passo 4.
+    // Sem estado para reiniciar: a tela é estática.
   };
 })(window);

@@ -376,9 +376,6 @@ sub { font-size: 0.7em; line-height: 0; vertical-align: -0.25em; }
 }
 .eixo { stroke: var(--tinta); stroke-width: 2.5; }
 
-/* Pulsos que correm pelas setas. */
-.pulso { opacity: 0; }
-
 /* ---------- Painel de notas (tecla N) ---------- */
 
 .notas-painel {
@@ -497,6 +494,5 @@ sub { font-size: 0.7em; line-height: 0; vertical-align: -0.25em; }
 
 @media (prefers-reduced-motion: reduce) {
   [data-passo] { transform: none; transition: opacity 150ms linear; }
-  .pulso { display: none; }
   * { scroll-behavior: auto !important; }
 }

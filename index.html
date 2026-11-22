@@ -45,7 +45,7 @@
     </div>
 
     <div class="rodape">
-      <div><div class="rotulo-mono">Disciplina</div><div class="valor" id="capa-disciplina">[NOME DA DISCIPLINA]</div></div>
+      <div><div class="rotulo-mono">Disciplina</div><div class="valor" id="capa-disciplina">Inteligência Artificial</div></div>
       <div><div class="rotulo-mono">Apresentação</div><div class="valor">Lucas Cavalcanti e Josué Costa</div></div>
     </div>
 
@@ -57,23 +57,79 @@
 
   <!-- ===================== 2. O que é um ECG ===================== -->
   <section class="tela" id="t-ecg" data-id="ecg" data-num="2" data-bloco="1" data-grupo="b1"
-           data-titulo="O que é um ECG" data-passos="1">
+           data-titulo="O que é um ECG" data-passos="5">
     <h1 class="titulo">O que é um <span class="chave">ECG</span></h1>
-    <div class="em-construcao cartao"><b>Tela em construção.</b><p>Batimento real com P, QRS e T aparecendo a cada seta.</p></div>
+
+    <div class="batimento cartao">
+      <div class="cab"><span class="nome">Um batimento real</span><span class="fonte">registro 100 · MIT-BIH</span></div>
+      <div class="area">
+        <svg id="ecg-batimento" width="672" height="392" viewBox="0 0 672 392" aria-label="Um batimento do registro 100"></svg>
+        <span class="rotulo-onda" id="ecg-rot-p" data-passo="2">onda P</span>
+        <span class="rotulo-onda" id="ecg-rot-qrs" data-passo="3">QRS</span>
+        <span class="rotulo-onda" id="ecg-rot-t" data-passo="4">onda T</span>
+      </div>
+    </div>
+
+    <div class="ritmo cartao">
+      <div class="nome">Batimento após batimento</div>
+      <svg id="ecg-ritmo" width="372" height="100" viewBox="0 0 372 100" aria-label="ECG correndo como num monitor"></svg>
+      <div class="fc">
+        <span class="numero-grande"><span id="ecg-bpm">74</span><span class="unidade"> bpm</span></span>
+        <span class="txt">frequência cardíaca no registro</span>
+      </div>
+    </div>
+
+    <div class="proporcao cartao" data-passo="5">
+      <div class="frase">A onda P tem cerca de <b id="ecg-fracao">1/10</b> da altura do QRS</div>
+      <div class="barras">
+        <span class="rot">QRS</span><div class="barra"><div class="cheio" id="ecg-barra-qrs"></div></div><span class="val" id="ecg-val-qrs">1,2 mV</span>
+        <span class="rot">onda P</span><div class="barra"><div class="cheio" id="ecg-barra-p"></div></div><span class="val" id="ecg-val-p">0,1 mV</span>
+      </div>
+    </div>
+
     <div class="notas">
       <ul>
         <li>O ECG registra a atividade elétrica do coração, com amplitude de poucos milivolts.</li>
         <li>Cada batimento tem partes com nome (onda P, complexo QRS, onda T), e o médico usa a forma delas para diagnosticar arritmias e outros problemas.</li>
         <li>Detalhes pequenos importam: a onda P tem uma fração da altura do QRS.</li>
       </ul>
+      <p class="deixa">Passos: batimento desenhado → onda P → QRS → onda T → a proporção P × QRS.</p>
     </div>
   </section>
 
   <!-- ===================== 3. Interferência de 60 Hz ===================== -->
   <section class="tela" id="t-ruido" data-id="ruido" data-num="3" data-bloco="1" data-grupo="b1"
-           data-titulo="A interferência de 60 Hz" data-passos="1">
-    <h1 class="titulo">O problema: <span class="chave">60 Hz</span></h1>
-    <div class="em-construcao cartao"><b>Tela em construção.</b><p>ECG + senoide de 60 Hz, botão com/sem ruído e lupa na onda P.</p></div>
+           data-titulo="A interferência de 60 Hz" data-passos="4">
+    <h1 class="titulo">O problema: o ruído de <span class="chave">60 Hz</span></h1>
+
+    <div class="segmentado alterna" role="group" aria-label="Mostrar o ECG com ou sem ruído" data-passo="2">
+      <button type="button" class="btn" id="ruido-com" aria-pressed="true">com ruído</button>
+      <button type="button" class="btn" id="ruido-sem" aria-pressed="false">sem ruído</button>
+    </div>
+
+    <div class="principal cartao">
+      <div class="etiqueta e-ecg"><span class="bolinha tinta"></span>ECG limpo</div>
+      <div class="mais">+</div>
+      <div class="etiqueta e-ruido"><span class="bolinha laranja"></span><span>ruído da rede<br>60 Hz</span></div>
+      <div class="etiqueta e-junto"><span class="bolinha laranja" id="ruido-junto-bolinha"></span><span id="ruido-junto-txt">ECG + ruído</span></div>
+      <svg id="ruido-principal" width="900" height="180" viewBox="0 0 900 180" aria-label="ECG e ruído de 60 Hz"></svg>
+    </div>
+
+    <svg class="lupa-ligacao" data-passo="3" width="1280" height="720" viewBox="0 0 1280 720" aria-hidden="true">
+      <circle id="ruido-lupa-aro" cx="0" cy="0" r="36" fill="none" stroke="#111111" stroke-width="4"/>
+      <path id="ruido-lupa-cabo" d="" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+
+    <div class="zoom cartao com-faixa" data-passo="3">
+      <div class="faixa laranja" id="ruido-zoom-cab">Lupa na onda P: com ruído, ela some</div>
+      <svg id="ruido-zoom" width="578" height="170" viewBox="0 0 578 170" aria-label="Ampliação da onda P"></svg>
+    </div>
+
+    <div class="pergunta em-uma-frase" data-passo="4">
+      <span class="pilula">a pergunta</span>
+      <span class="frase">E se, em vez de cortar uma faixa fixa, o filtro aprendesse o ruído?</span>
+    </div>
+
     <div class="notas">
       <ul>
         <li>Os cabos do eletrocardiógrafo e o corpo do paciente funcionam como antena e captam a rede elétrica, que no Brasil é de 60 Hz.</li>
@@ -81,6 +137,7 @@
         <li>A rede não é perfeita: a frequência oscila um pouco e a intensidade muda quando alguém liga um aparelho perto. Isso vai importar no fim.</li>
         <li>Pergunta que guia o resto: <b>“e se, em vez de cortar uma faixa fixa, o filtro aprendesse o ruído?”</b></li>
       </ul>
+      <p class="deixa">Passos: as duas ondas → elas viram uma (botão com/sem ruído) → lupa na onda P → a pergunta.</p>
     </div>
   </section>
 
@@ -115,11 +172,9 @@
     <svg class="ligacoes" data-passo="4" width="1280" height="58" viewBox="0 0 1280 58" aria-hidden="true">
       <g>
         <path d="M640 50 L640 10 M628 22 L640 8 L652 22" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle class="pulso y" cx="640" cy="48" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:-36px"/>
       </g>
       <g>
         <path d="M1049 8 L1049 48 M1037 36 L1049 50 L1061 36" fill="none" stroke="#2b59ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle class="pulso y atraso" cx="1049" cy="10" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:36px"/>
       </g>
     </svg>
 
@@ -131,7 +186,6 @@
       </div>
       <svg class="seta" width="64" height="60" viewBox="0 0 64 60" aria-hidden="true">
         <path d="M8 30 L52 30 M40 18 L54 30 L40 42" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle class="pulso x" cx="10" cy="30" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:36px"/>
       </svg>
       <div class="cartao destaque">
         <span class="nome">Adaline</span>
@@ -140,7 +194,6 @@
       </div>
       <svg class="seta" width="64" height="60" viewBox="0 0 64 60" aria-hidden="true">
         <path d="M56 30 L12 30 M24 18 L10 30 L24 42" fill="none" stroke="#2b59ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle class="pulso x atraso" cx="54" cy="30" r="7" fill="#2b59ff" stroke="#111111" stroke-width="2" style="--dist:-36px"/>
       </svg>
       <div class="cartao">
         <span class="nome"><span class="bolinha azul"></span>Regra LMS</span>
@@ -416,6 +469,8 @@
 <script src="js/sinais.js"></script>
 <script src="js/experimentos.js"></script>
 <script src="js/telas/capa.js"></script>
+<script src="js/telas/ecg.js"></script>
+<script src="js/telas/ruido.js"></script>
 <script src="js/telas/widrow.js"></script>
 <script src="js/telas/exp3.js"></script>
 <script src="js/navegacao.js"></script>

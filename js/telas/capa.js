@@ -59,6 +59,8 @@
         svg: sec.querySelector('#capa-monitor'),
         caixa: { x: 16, y: 10, w: 1130, h: 128 },
         janela: 2,
+        // Câmera lenta: o sinal corre a 35% do tempo real para dar de ver o ruído.
+        velocidade: 0.35,
         lo: -0.85,
         hi: 1.85,
         gerar: gerar,

@@ -33,6 +33,27 @@
     return out;
   }
 
+  /* Ponto de volta para repetir o trecho em loop sem salto na emenda
+   * (procura no último segundo a amostra que mais se parece com o início). */
+  function pontoDeVolta(x) {
+    var melhor = x.length, custo = Infinity;
+    for (var L = x.length - FS; L < x.length; L++) {
+      var c = Math.abs(x[L] - x[0]) + 4 * Math.abs((x[L] - x[L - 1]) - (x[1] - x[0]));
+      if (c < custo) { custo = c; melhor = L; }
+    }
+    return melhor;
+  }
+
+  /* Picos R: máximos acima de `limiar` mV, separados por pelo menos 0,3 s. */
+  function picosR(x, limiar) {
+    var pk = [], lim = limiar == null ? 0.6 : limiar, dist = Math.round(0.3 * FS);
+    for (var i = 1; i < x.length - 1; i++) {
+      if (x[i] > lim && x[i] >= x[i - 1] && x[i] > x[i + 1] &&
+          (!pk.length || i - pk[pk.length - 1] > dist)) pk.push(i);
+    }
+    return pk;
+  }
+
   /* ---------- Ruído ---------- */
 
   /* Ruído fixo de 60 Hz na amostra n: A·sen(2π·60·n/fs + 0,8). */
@@ -232,7 +253,7 @@
     if (!this.rodando) return;
     if (this.t0 != null) {
       var dt = Math.min(0.1, (t - this.t0) / 1000);
-      this.resto += dt * FS;
+      this.resto += dt * FS * (this.op.velocidade || 1);
       var k = Math.floor(this.resto);
       this.resto -= k;
       for (var i = 0; i < k; i++) this._amostra();
@@ -248,6 +269,8 @@
     FASE_RUIDO: FASE_RUIDO,
     ecg: ecg,
     repetir: repetir,
+    pontoDeVolta: pontoDeVolta,
+    picosR: picosR,
     ruidoFixo: ruidoFixo,
     modeloExp3: modeloExp3,
     notchCoef: notchCoef,
